@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sources &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Misc Tools" href="fkdrm.Tools.html" />
+    <link rel="prev" title="SourceTimeFunctions" href="fkdrm.SourceTimeFunctions.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fkdrm.html">fkdrm python module</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="fkdrm.html#fkdrm-main-class">fkdrm main class</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#simulation-parameters">Simulation parameters</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="fkdrm.html#modeling-subclasses">Modeling Subclasses</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.CrustModels.html">CrustModels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.Receivers.html">Receivers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.SourceTimeFunctions.html">SourceTimeFunctions</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Sources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.Tools.html">Misc Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#module-fkdrm.CrustModel">CrustModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#module-fkdrm.fkdrmBase">fkdrmBase - Abstract Base Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="fkdrm.html">fkdrm python module</a> &raquo;</li>
+        
+      <li>Sources</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/fkdrm.Sources.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sources">
+<h1>Sources<a class="headerlink" href="#sources" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-fkdrm.Sources.MathyFaultPlane">
+<span id="mathyfaultplane"></span><h2>MathyFaultPlane<a class="headerlink" href="#module-fkdrm.Sources.MathyFaultPlane" title="Permalink to this headline">¶</a></h2>
+<p>PointSource</p>
+<p>Defines interface for point sources.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><p class="first">Examples can be given using either the <code class="docutils literal notranslate"><span class="pre">Example</span></code> or <code class="docutils literal notranslate"><span class="pre">Examples</span></code>
+sections. Sections support any reStructuredText formatting, including
+literal blocks:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>$ python example_google.py
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Section breaks are created by resuming unindented text. Section breaks
+are also implicitly created anytime a new section starts.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><dl class="first last docutils">
+<dt>module_level_variable1 (int): Module level variables may be documented in</dt>
+<dd><p class="first">either the <code class="docutils literal notranslate"><span class="pre">Attributes</span></code> section of the module docstring, or in an
+inline docstring immediately following the variable.</p>
+<p class="last">Either form is acceptable, but the two should not be mixed. Choose
+one convention to document module level variables and be consistent
+with it.</p>
+</dd>
+</dl>
+</dd>
+<dt>Todo:</dt>
+<dd><ul class="first last simple">
+<li>For module TODOs</li>
+<li>You have to also use <code class="docutils literal notranslate"><span class="pre">sphinx.ext.todo</span></code> extension</li>
+</ul>
+</dd>
+</dl>
+<dl class="class">
+<dt id="fkdrm.Sources.MathyFaultPlane.MathyFaultPlane">
+<em class="property">class </em><code class="descclassname">fkdrm.Sources.MathyFaultPlane.</code><code class="descname">MathyFaultPlane</code><span class="sig-paren">(</span><em>x0</em>, <em>strike</em>, <em>dip</em>, <em>lstrike</em>, <em>ldip</em>, <em>nstrike</em>, <em>ndip</em>, <em>rakefun</em>, <em>slipfun</em>, <em>dsigmafun</em>, <em>ttfun</em>, <em>crust</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/MathyFaultPlane.html#MathyFaultPlane"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.MathyFaultPlane.MathyFaultPlane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fkdrm.Sources.PointSourceList.PointSourceList" title="fkdrm.Sources.PointSourceList.PointSourceList"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Sources.PointSourceList.PointSourceList</span></code></a></p>
+<p>The summary line for a class docstring should fit on one line.</p>
+<p>If the class has public attributes, they may be documented here
+in an <code class="docutils literal notranslate"><span class="pre">Attributes</span></code> section and follow the same formatting as a
+function’s <code class="docutils literal notranslate"><span class="pre">Args</span></code> section. Alternatively, attributes may be documented
+inline with the attribute’s declaration (see __init__ method below).</p>
+<p>Properties created with the <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code> decorator should be documented
+in the property’s getter method.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd>attr1 (str): Description of <cite>attr1</cite>.
+attr2 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional): Description of <cite>attr2</cite>.</dd>
+</dl>
+<dl class="method">
+<dt id="fkdrm.Sources.MathyFaultPlane.MathyFaultPlane.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/MathyFaultPlane.html#MathyFaultPlane.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.MathyFaultPlane.MathyFaultPlane.get_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-fkdrm.Sources.PointSource">
+<span id="pointsource"></span><h2>PointSource<a class="headerlink" href="#module-fkdrm.Sources.PointSource" title="Permalink to this headline">¶</a></h2>
+<p>PointSource</p>
+<p>Defines interface for point sources.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><p class="first">Examples can be given using either the <code class="docutils literal notranslate"><span class="pre">Example</span></code> or <code class="docutils literal notranslate"><span class="pre">Examples</span></code>
+sections. Sections support any reStructuredText formatting, including
+literal blocks:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>$ python example_google.py
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Section breaks are created by resuming unindented text. Section breaks
+are also implicitly created anytime a new section starts.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><dl class="first last docutils">
+<dt>module_level_variable1 (int): Module level variables may be documented in</dt>
+<dd><p class="first">either the <code class="docutils literal notranslate"><span class="pre">Attributes</span></code> section of the module docstring, or in an
+inline docstring immediately following the variable.</p>
+<p class="last">Either form is acceptable, but the two should not be mixed. Choose
+one convention to document module level variables and be consistent
+with it.</p>
+</dd>
+</dl>
+</dd>
+<dt>Todo:</dt>
+<dd><ul class="first last simple">
+<li>For module TODOs</li>
+<li>You have to also use <code class="docutils literal notranslate"><span class="pre">sphinx.ext.todo</span></code> extension</li>
+</ul>
+</dd>
+</dl>
+<dl class="class">
+<dt id="fkdrm.Sources.PointSource.PointSource">
+<em class="property">class </em><code class="descclassname">fkdrm.Sources.PointSource.</code><code class="descname">PointSource</code><span class="sig-paren">(</span><em>x</em>, <em>angles</em>, <em>tt=0.0</em>, <em>stf=&lt;fkdrm.SourceTimeFunctions.Dirac.Dirac object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/PointSource.html#PointSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.PointSource.PointSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fkdrm.html#fkdrm.fkdrmBase.SourceModel" title="fkdrm.fkdrmBase.SourceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.fkdrmBase.SourceModel</span></code></a></p>
+<p>The summary line for a class docstring should fit on one line.</p>
+<p>If the class has public attributes, they may be documented here
+in an <code class="docutils literal notranslate"><span class="pre">Attributes</span></code> section and follow the same formatting as a
+function’s <code class="docutils literal notranslate"><span class="pre">Args</span></code> section. Alternatively, attributes may be documented
+inline with the attribute’s declaration (see __init__ method below).</p>
+<p>Properties created with the <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code> decorator should be documented
+in the property’s getter method.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd>attr1 (str): Description of <cite>attr1</cite>.
+attr2 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional): Description of <cite>attr2</cite>.</dd>
+</dl>
+<dl class="method">
+<dt id="fkdrm.Sources.PointSource.PointSource.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/PointSource.html#PointSource.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.PointSource.PointSource.get_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Sources.PointSource.PointSource.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/PointSource.html#PointSource.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.PointSource.PointSource.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Example of docstring on the __init__ method.</p>
+<p>The __init__ method may be documented in either the class level
+docstring, or as a docstring on the __init__ method itself.</p>
+<p>Either form is acceptable, but the two should not be mixed. Choose one
+convention to document the __init__ method and be consistent with it.</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>Do not include the <cite>self</cite> parameter in the <code class="docutils literal notranslate"><span class="pre">Args</span></code> section.</dd>
+<dt>Args:</dt>
+<dd>param1 (str): Description of <cite>param1</cite>.
+param2 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional): Description of <cite>param2</cite>. Multiple lines are supported.
+param3 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>): Description of <cite>param3</cite>.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-fkdrm.Sources.PointSourceList">
+<span id="pointsourcelist"></span><h2>PointSourceList<a class="headerlink" href="#module-fkdrm.Sources.PointSourceList" title="Permalink to this headline">¶</a></h2>
+<p>PointSource</p>
+<p>Defines interface for point sources.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><p class="first">Examples can be given using either the <code class="docutils literal notranslate"><span class="pre">Example</span></code> or <code class="docutils literal notranslate"><span class="pre">Examples</span></code>
+sections. Sections support any reStructuredText formatting, including
+literal blocks:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>$ python example_google.py
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Section breaks are created by resuming unindented text. Section breaks
+are also implicitly created anytime a new section starts.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><dl class="first last docutils">
+<dt>module_level_variable1 (int): Module level variables may be documented in</dt>
+<dd><p class="first">either the <code class="docutils literal notranslate"><span class="pre">Attributes</span></code> section of the module docstring, or in an
+inline docstring immediately following the variable.</p>
+<p class="last">Either form is acceptable, but the two should not be mixed. Choose
+one convention to document module level variables and be consistent
+with it.</p>
+</dd>
+</dl>
+</dd>
+<dt>Todo:</dt>
+<dd><ul class="first last simple">
+<li>For module TODOs</li>
+<li>You have to also use <code class="docutils literal notranslate"><span class="pre">sphinx.ext.todo</span></code> extension</li>
+</ul>
+</dd>
+</dl>
+<dl class="class">
+<dt id="fkdrm.Sources.PointSourceList.PointSourceList">
+<em class="property">class </em><code class="descclassname">fkdrm.Sources.PointSourceList.</code><code class="descname">PointSourceList</code><span class="sig-paren">(</span><em>pslist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/PointSourceList.html#PointSourceList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.PointSourceList.PointSourceList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fkdrm.html#fkdrm.fkdrmBase.SourceModel" title="fkdrm.fkdrmBase.SourceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.fkdrmBase.SourceModel</span></code></a></p>
+<p>The summary line for a class docstring should fit on one line.</p>
+<p>If the class has public attributes, they may be documented here
+in an <code class="docutils literal notranslate"><span class="pre">Attributes</span></code> section and follow the same formatting as a
+function’s <code class="docutils literal notranslate"><span class="pre">Args</span></code> section. Alternatively, attributes may be documented
+inline with the attribute’s declaration (see __init__ method below).</p>
+<p>Properties created with the <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code> decorator should be documented
+in the property’s getter method.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd>attr1 (str): Description of <cite>attr1</cite>.
+attr2 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional): Description of <cite>attr2</cite>.</dd>
+</dl>
+<dl class="method">
+<dt id="fkdrm.Sources.PointSourceList.PointSourceList.get_nsources">
+<code class="descname">get_nsources</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/PointSourceList.html#PointSourceList.get_nsources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.PointSourceList.PointSourceList.get_nsources" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Sources.PointSourceList.PointSourceList.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Sources/PointSourceList.html#PointSourceList.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Sources.PointSourceList.PointSourceList.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Example of docstring on the __init__ method.</p>
+<p>The __init__ method may be documented in either the class level
+docstring, or as a docstring on the __init__ method itself.</p>
+<p>Either form is acceptable, but the two should not be mixed. Choose one
+convention to document the __init__ method and be consistent with it.</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>Do not include the <cite>self</cite> parameter in the <code class="docutils literal notranslate"><span class="pre">Args</span></code> section.</dd>
+<dt>Args:</dt>
+<dd>param1 (str): Description of <cite>param1</cite>.
+param2 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional): Description of <cite>param2</cite>. Multiple lines are supported.
+param3 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>): Description of <cite>param3</cite>.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-fkdrm.Sources">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fkdrm.Sources" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fkdrm.Tools.html" class="btn btn-neutral float-right" title="Misc Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fkdrm.SourceTimeFunctions.html" class="btn btn-neutral" title="SourceTimeFunctions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

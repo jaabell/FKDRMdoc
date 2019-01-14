@@ -1,0 +1,4 @@
+<map id="inheritancec36a633760" name="inheritancec36a633760">
+<area shape="rect" id="node1" href="#fkdrm.Receivers.SimpleStation.SimpleStation" target="_top" title="This simple receiver stores response in memory. " alt="" coords="249,5,568,31"/>
+<area shape="rect" id="node2" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" target="_top" title="Receiver interface" alt="" coords="5,5,201,31"/>
+</map>

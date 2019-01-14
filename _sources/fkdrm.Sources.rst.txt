@@ -1,0 +1,36 @@
+Sources
+=============
+
+
+MathyFaultPlane 
+------------------------------------
+
+.. automodule:: fkdrm.Sources.MathyFaultPlane
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+PointSource 
+--------------------------------
+
+.. automodule:: fkdrm.Sources.PointSource
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+PointSourceList 
+------------------------------------
+
+.. automodule:: fkdrm.Sources.PointSourceList
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: fkdrm.Sources
+    :members:
+    :undoc-members:
+    :show-inheritance:

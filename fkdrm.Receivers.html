@@ -1,0 +1,852 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Receivers &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SourceTimeFunctions" href="fkdrm.SourceTimeFunctions.html" />
+    <link rel="prev" title="CrustModels" href="fkdrm.CrustModels.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fkdrm.html">fkdrm python module</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="fkdrm.html#fkdrm-main-class">fkdrm main class</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#simulation-parameters">Simulation parameters</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="fkdrm.html#modeling-subclasses">Modeling Subclasses</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.CrustModels.html">CrustModels</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Receivers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.SourceTimeFunctions.html">SourceTimeFunctions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.Sources.html">Sources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.Tools.html">Misc Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#module-fkdrm.CrustModel">CrustModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#module-fkdrm.fkdrmBase">fkdrmBase - Abstract Base Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="fkdrm.html">fkdrm python module</a> &raquo;</li>
+        
+      <li>Receivers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/fkdrm.Receivers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="receivers">
+<h1><a class="toc-backref" href="#id1">Receivers</a><a class="headerlink" href="#receivers" title="Permalink to this headline">¶</a></h1>
+<p>All receivers are sub-classes of <a class="reference internal" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" title="fkdrm.fkdrmBase.Receiver"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.fkdrmBase.Receiver</span></code></a> which defines
+an abstract interface for all receivers.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#receivers" id="id1">Receivers</a><ul>
+<li><a class="reference internal" href="#module-fkdrm.Receivers.SimpleStation" id="id2">SimpleStation</a></li>
+<li><a class="reference internal" href="#module-fkdrm.Receivers.StationList" id="id3">StationList</a></li>
+<li><a class="reference internal" href="#module-fkdrm.Receivers.TxtStation" id="id4">TxtStation</a></li>
+<li><a class="reference internal" href="#module-fkdrm.Receivers.DRMBox" id="id5">DRMBox</a></li>
+<li><a class="reference internal" href="#module-fkdrm.Receivers" id="id6">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="module-fkdrm.Receivers.SimpleStation">
+<span id="simplestation"></span><h2><a class="toc-backref" href="#id2">SimpleStation</a><a class="headerlink" href="#module-fkdrm.Receivers.SimpleStation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation">
+<em class="property">class </em><code class="descclassname">fkdrm.Receivers.SimpleStation.</code><code class="descname">SimpleStation</code><span class="sig-paren">(</span><em>x</em>, <em>filter_results=False</em>, <em>filter_parameters={}</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" title="fkdrm.fkdrmBase.Receiver"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.fkdrmBase.Receiver</span></code></a></p>
+<p>This simple receiver stores response in memory.</p>
+<p>Internally, numpy arrays are used for storage. Optional parameters allow filtering
+of the response before outputting, althoiugh it is always stored
+raw (unfiltered), therefore the user can experiment with
+different filtering settings.</p>
+<p>Results can be saved through the <a class="reference internal" href="#fkdrm.Receivers.SimpleStation.SimpleStation.save" title="fkdrm.Receivers.SimpleStation.SimpleStation.save"><code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code></a> method and loaded with the <a class="reference internal" href="#fkdrm.Receivers.SimpleStation.SimpleStation.load" title="fkdrm.Receivers.SimpleStation.SimpleStation.load"><code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code></a> function.
+for posterior use.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>numpy array</em><em> (</em><em>3</em><em>,</em><em>)</em>) – xyz location of the station.</li>
+<li><strong>filter_results</strong> (<em>bool</em>) – (optional) whether a filter should be applied to station response</li>
+<li><strong>filter_parameters</strong> (<em>dict</em>) – (optional) filter parameter settings (see below)</li>
+<li><strong>name</strong> (<em>str</em>) – (optional) station name, used for plotting and other actions.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Filtering is performed using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">scipy.signal</span></code> module. A Butterworth filter 
+(<code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.butter</span></code>) is designed and applied using the acausal two-way
+filter (<code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.filtfilt</span></code>) with constant padding using the edge values 
+of the response as padding values.</p>
+<p>Filter parameter settings:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">filter_parameters['fmax']=10</span></code>: <cite>(double)</cite> Cut-off frequency for the low-pass filter in Hz.</li>
+<li><code class="docutils literal notranslate"><span class="pre">filter_parameters['btype']='low</span></code>: <cite>(str)</cite> Filter type</li>
+<li><code class="docutils literal notranslate"><span class="pre">filter_parameters['order']=3</span></code>: <cite>(int)</cite> Order of the filter.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Create a station at (10,10,0), setting filtering </span>
+<span class="c1"># to an order 3 filter with a 3Hz cutoff.</span>
+<span class="n">station</span> <span class="o">=</span> <span class="n">SimpleStation</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> 
+    <span class="n">filter_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+    <span class="n">filter_parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fmax&#39;</span><span class="p">:</span><span class="mf">5.</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">})</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.add_to_response">
+<code class="descname">add_to_response</code><span class="sig-paren">(</span><em>z</em>, <em>e</em>, <em>n</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.add_to_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.add_to_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superimpose a new response to current response.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.get_nreceivers">
+<code class="descname">get_nreceivers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.get_nreceivers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of receivers of this class (for receiver containers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.get_pos">
+<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.get_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the position of the receiver station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Position vector of the station.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Retval:</th><td class="field-body">numpy array shape=(3,)</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.get_response">
+<code class="descname">get_response</code><span class="sig-paren">(</span><em>do_filter=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.get_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.get_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the recorded response of the station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>do_filter</strong> (<em>bool</em>) – Will/won’t filter if filter parameters have been set. (Most useful to disable filtering before return)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Z (down), E (east), N (north), t (time) response of the station.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Retval:</th><td class="field-body">tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_response</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.get_response_derivative">
+<code class="descname">get_response_derivative</code><span class="sig-paren">(</span><em>ntimes=1</em>, <em>do_filter=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.get_response_derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.get_response_derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the time-derivative of the recorded response of the station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ntimes</strong> (<em>int</em>) – How many times to differentiate in time.</li>
+<li><strong>do_filter</strong> – Will/won’t filter if filter parameters have been set. (Most useful to disable filtering before return)</li>
+<li><strong>do_filter</strong> – bool</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Z (down), E (east), N (north), t (time) response of the station differentiated <code class="docutils literal notranslate"><span class="pre">ntimes</span></code> in time</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Retval:</th><td class="field-body"><p class="first last">tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_response_derivative</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.get_response_integral">
+<code class="descname">get_response_integral</code><span class="sig-paren">(</span><em>ntimes=1</em>, <em>do_filter=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.get_response_integral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.get_response_integral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the time-integral of the recorded response of the station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ntimes</strong> (<em>int</em>) – How many times to time-integrate.</li>
+<li><strong>do_filter</strong> – Will/won’t filter if filter parameters have been set. (Most useful to disable filtering before return)</li>
+<li><strong>do_filter</strong> – bool</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Z (down), E (east), N (north), t (time) response of the station integrated <code class="docutils literal notranslate"><span class="pre">ntimes</span></code> in time</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Retval:</th><td class="field-body"><p class="first last">tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_response_integral</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.load">
+<em class="property">static </em><code class="descname">load</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load station from file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fname</strong> (<em>str</em>) – File name to save to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Loaded station.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#fkdrm.Receivers.SimpleStation.SimpleStation" title="fkdrm.Receivers.SimpleStation.SimpleStation"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleStation</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">station</span> <span class="o">=</span> <span class="n">SimpleStation</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;station.pickle&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement the iterator protocol (also needs to implement <code class="docutils literal notranslate"><span class="pre">__iter__()</span></code>)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current station and all its data into a binary file (uses cPickle).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fname</strong> (<em>str</em>) – File name to save to.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">station</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;station.pickle&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.set_dt">
+<code class="descname">set_dt</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.set_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the time-step of the receiver</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.SimpleStation.SimpleStation.write_response">
+<code class="descname">write_response</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/SimpleStation.html#SimpleStation.write_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.SimpleStation.SimpleStation.write_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the response.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Inheritance diagram:</p>
+<div class="graphviz"><img src="_images/inheritance-0d623ccc00c7b3af65406a4f646ab8d9824c1c99.png" alt="Inheritance diagram of fkdrm.Receivers.SimpleStation" usemap="#inheritancec36a633760" class="inheritance graphviz" /></div>
+<map id="inheritancec36a633760" name="inheritancec36a633760">
+<area shape="rect" id="node1" href="#fkdrm.Receivers.SimpleStation.SimpleStation" target="_top" title="This simple receiver stores response in memory. " alt="" coords="249,5,568,31"/>
+<area shape="rect" id="node2" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" target="_top" title="Receiver interface" alt="" coords="5,5,201,31"/>
+</map><p>.</p>
+</div>
+<div class="section" id="module-fkdrm.Receivers.StationList">
+<span id="stationlist"></span><h2><a class="toc-backref" href="#id3">StationList</a><a class="headerlink" href="#module-fkdrm.Receivers.StationList" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fkdrm.Receivers.StationList.StationList">
+<em class="property">class </em><code class="descclassname">fkdrm.Receivers.StationList.</code><code class="descname">StationList</code><span class="sig-paren">(</span><em>stations</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/StationList.html#StationList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.StationList.StationList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" title="fkdrm.fkdrmBase.Receiver"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.fkdrmBase.Receiver</span></code></a></p>
+<p>This is a list of SimpleStations.</p>
+<p>If you wan’t to have more than one point in space where you need
+to record motions, use this class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stations</strong> (<code class="docutils literal notranslate"><span class="pre">list</span></code> containing <code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleStation</span></code>) – A list of SimpleStations</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sta1</span> <span class="o">=</span> <span class="n">SimpleStation</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">sta2</span> <span class="o">=</span> <span class="n">SimpleStation</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">stations</span> <span class="o">=</span> <span class="n">StationList</span><span class="p">([</span><span class="n">sta1</span><span class="p">,</span> <span class="n">sta2</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="fkdrm.Receivers.StationList.StationList.__iter__">
+<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/StationList.html#StationList.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.StationList.StationList.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate the list of stations:</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Obtain a StaitionList iterator</span>
+<span class="n">station_iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Iterate over all stations using a for loop</span>
+<span class="k">for</span> <span class="n">sta</span> <span class="ow">in</span> <span class="n">stations</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="n">sta</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.StationList.StationList.add_to_response">
+<code class="descname">add_to_response</code><span class="sig-paren">(</span><em>z</em>, <em>e</em>, <em>n</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/StationList.html#StationList.add_to_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.StationList.StationList.add_to_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superimpose a new response to current response.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.StationList.StationList.get_nreceivers">
+<code class="descname">get_nreceivers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/StationList.html#StationList.get_nreceivers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.StationList.StationList.get_nreceivers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of receivers of this class (for receiver containers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.StationList.StationList.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/StationList.html#StationList.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.StationList.StationList.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the next element in the station list.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Iterate over all stations</span>
+<span class="nb">iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span>
+<span class="n">next_station</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.StationList.StationList.set_dt">
+<code class="descname">set_dt</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.StationList.StationList.set_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the time-step of the receiver</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.StationList.StationList.write_response">
+<code class="descname">write_response</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/StationList.html#StationList.write_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.StationList.StationList.write_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the response.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Inheritance diagram:</p>
+<blockquote>
+<div><div class="graphviz"><img src="_images/inheritance-4ffec19a64f738172dfb144f34822de5a200f00b.png" alt="Inheritance diagram of fkdrm.Receivers.StationList" usemap="#inheritance429efa368d" class="inheritance graphviz" /></div>
+<map id="inheritance429efa368d" name="inheritance429efa368d">
+<area shape="rect" id="node1" href="#fkdrm.Receivers.StationList.StationList" target="_top" title="This is a list of SimpleStations." alt="" coords="249,5,524,31"/>
+<area shape="rect" id="node2" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" target="_top" title="Receiver interface" alt="" coords="5,5,201,31"/>
+</map></div></blockquote>
+<p>.</p>
+</div>
+<div class="section" id="module-fkdrm.Receivers.TxtStation">
+<span id="txtstation"></span><h2><a class="toc-backref" href="#id4">TxtStation</a><a class="headerlink" href="#module-fkdrm.Receivers.TxtStation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation">
+<em class="property">class </em><code class="descclassname">fkdrm.Receivers.TxtStation.</code><code class="descname">TxtStation</code><span class="sig-paren">(</span><em>filename</em>, <em>x</em>, <em>filter_results=False</em>, <em>filter_parameters={}</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/TxtStation.html#TxtStation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fkdrm.Receivers.SimpleStation.SimpleStation" title="fkdrm.Receivers.SimpleStation.SimpleStation"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Receivers.SimpleStation.SimpleStation</span></code></a></p>
+<p>This specialization of SimpleStation can write responses into a text file/</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>numpy array</em><em> (</em><em>3</em><em>,</em><em>)</em>) – xyz location of the station.</li>
+<li><strong>filter_results</strong> (<em>bool</em>) – (optional) See <a class="reference internal" href="#module-fkdrm.Receivers.SimpleStation" title="fkdrm.Receivers.SimpleStation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fkdrm.Receivers.SimpleStation</span></code></a></li>
+<li><strong>filter_parameters</strong> (<em>dict</em>) – (optional) See <a class="reference internal" href="#module-fkdrm.Receivers.SimpleStation" title="fkdrm.Receivers.SimpleStation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fkdrm.Receivers.SimpleStation</span></code></a></li>
+<li><strong>name</strong> (<em>str</em>) – (optional) station name</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.add_to_response">
+<code class="descname">add_to_response</code><span class="sig-paren">(</span><em>z</em>, <em>e</em>, <em>n</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.add_to_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superimpose a new response to current response.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.get_nreceivers">
+<code class="descname">get_nreceivers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.get_nreceivers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of receivers of this class (for receiver containers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.get_pos">
+<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.get_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the position of the receiver station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Position vector of the station.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Retval:</th><td class="field-body">numpy array shape=(3,)</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.get_response">
+<code class="descname">get_response</code><span class="sig-paren">(</span><em>do_filter=True</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.get_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the recorded response of the station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>do_filter</strong> (<em>bool</em>) – Will/won’t filter if filter parameters have been set. (Most useful to disable filtering before return)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Z (down), E (east), N (north), t (time) response of the station.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Retval:</th><td class="field-body">tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_response</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.get_response_derivative">
+<code class="descname">get_response_derivative</code><span class="sig-paren">(</span><em>ntimes=1</em>, <em>do_filter=True</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.get_response_derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the time-derivative of the recorded response of the station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ntimes</strong> (<em>int</em>) – How many times to differentiate in time.</li>
+<li><strong>do_filter</strong> – Will/won’t filter if filter parameters have been set. (Most useful to disable filtering before return)</li>
+<li><strong>do_filter</strong> – bool</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Z (down), E (east), N (north), t (time) response of the station differentiated <code class="docutils literal notranslate"><span class="pre">ntimes</span></code> in time</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Retval:</th><td class="field-body"><p class="first last">tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_response_derivative</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.get_response_integral">
+<code class="descname">get_response_integral</code><span class="sig-paren">(</span><em>ntimes=1</em>, <em>do_filter=True</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.get_response_integral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the time-integral of the recorded response of the station.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ntimes</strong> (<em>int</em>) – How many times to time-integrate.</li>
+<li><strong>do_filter</strong> – Will/won’t filter if filter parameters have been set. (Most useful to disable filtering before return)</li>
+<li><strong>do_filter</strong> – bool</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Z (down), E (east), N (north), t (time) response of the station integrated <code class="docutils literal notranslate"><span class="pre">ntimes</span></code> in time</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Retval:</th><td class="field-body"><p class="first last">tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">get_response_integral</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.load">
+<em class="property">static </em><code class="descname">load</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load station from file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fname</strong> (<em>str</em>) – File name to save to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Loaded station.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleStation</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">station</span> <span class="o">=</span> <span class="n">SimpleStation</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;station.pickle&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement the iterator protocol (also needs to implement <code class="docutils literal notranslate"><span class="pre">__iter__()</span></code>)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current station and all its data into a binary file (uses cPickle).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fname</strong> (<em>str</em>) – File name to save to.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">station</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;station.pickle&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.set_dt">
+<code class="descname">set_dt</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.set_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the time-step of the receiver</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.TxtStation.TxtStation.write_response">
+<code class="descname">write_response</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/TxtStation.html#TxtStation.write_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.TxtStation.TxtStation.write_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the response.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Inheritance diagram:</p>
+<div class="graphviz"><img src="_images/inheritance-bb69c999159238b40ff1be784fea94b2c29d53a7.png" alt="Inheritance diagram of fkdrm.Receivers.TxtStation" usemap="#inheritance3751333463" class="inheritance graphviz" /></div>
+<map id="inheritance3751333463" name="inheritance3751333463">
+<area shape="rect" id="node1" href="#fkdrm.Receivers.SimpleStation.SimpleStation" target="_top" title="This simple receiver stores response in memory. " alt="" coords="215,5,489,26"/>
+<area shape="rect" id="node3" href="#fkdrm.Receivers.TxtStation.TxtStation" target="_top" title="This specialization of SimpleStation can write responses into a text file/" alt="" coords="530,5,763,26"/>
+<area shape="rect" id="node2" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" target="_top" title="Receiver interface" alt="" coords="5,5,173,26"/>
+</map><p>.</p>
+</div>
+<div class="section" id="module-fkdrm.Receivers.DRMBox">
+<span id="drmbox"></span><h2><a class="toc-backref" href="#id5">DRMBox</a><a class="headerlink" href="#module-fkdrm.Receivers.DRMBox" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fkdrm.Receivers.DRMBox.DRMBox">
+<em class="property">class </em><code class="descclassname">fkdrm.Receivers.DRMBox.</code><code class="descname">DRMBox</code><span class="sig-paren">(</span><em>pos</em>, <em>Nelem</em>, <em>h</em>, <em>azimuth=0.0</em>, <em>crust=0</em>, <em>filter_results=False</em>, <em>filter_parameters={}</em>, <em>name=''</em>, <em>x_qa=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/DRMBox.html#DRMBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.DRMBox.DRMBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fkdrm.Receivers.StationList.StationList" title="fkdrm.Receivers.StationList.StationList"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Receivers.StationList.StationList</span></code></a></p>
+<p>A class to generate receiver layout useful in DRM.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/drmbox.png"><img alt="_images/drmbox.png" src="_images/drmbox.png" style="width: 469.8px; height: 319.8px;" /></a>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pos</strong> (<em>(</em><em>numpy array</em><em> (</em><em>3</em><em>,</em><em>)</em><em>)</em>) – Center point of the DRM box in xyz coordinates.</li>
+<li><strong>Nelem</strong> (<em>(</em><em>int</em><em>)</em>) – Number of elements (stations) in each direction. <code class="docutils literal notranslate"><span class="pre">Nelem</span> <span class="pre">=</span> <span class="pre">[Nx,</span> <span class="pre">Ny,</span> <span class="pre">Nz]</span></code></li>
+<li><strong>h</strong> (<em>(</em><em>double</em><em>)</em>) – Spacings in each direction <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">[hx,</span> <span class="pre">hy,</span> <span class="pre">hz]</span></code></li>
+<li><strong>azimuth</strong> (<em>(</em><em>double</em><em>)</em>) – Azimuthal orientation of the box.</li>
+<li><strong>crust</strong> ((<a class="reference internal" href="fkdrm.html#module-fkdrm.CrustModel" title="fkdrm.CrustModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fkdrm.CrustModel</span></code></a>)) – Crust properties.</li>
+<li><strong>filter_results</strong> (<em>(</em><em>bool</em><em>)</em>) – (See <a class="reference internal" href="#module-fkdrm.Receivers.SimpleStation" title="fkdrm.Receivers.SimpleStation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fkdrm.Receivers.SimpleStation</span></code></a>)</li>
+<li><strong>filter_parameters</strong> (<em>(</em><em>dict</em><em>)</em>) – (See <a class="reference internal" href="#module-fkdrm.Receivers.SimpleStation" title="fkdrm.Receivers.SimpleStation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fkdrm.Receivers.SimpleStation</span></code></a>)</li>
+<li><strong>name</strong> (<em>(</em><em>str</em><em>)</em>) – </li>
+<li><strong>x_qa</strong> (<em>list of numpy array</em><em> (</em><em>3</em><em>,</em><em>)</em>) – List of points where QA data is requested.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Side lengths of the DRM box are <code class="docutils literal notranslate"><span class="pre">[Nx*hx,</span> <span class="pre">Ny*hy,</span> <span class="pre">Nz*hz]</span></code> up to the interior
+boundary of the box. Exterior boundary has side lengths: <code class="docutils literal notranslate"><span class="pre">[(Nx+2)*hx,</span> <span class="pre">(Ny+2)*hy,</span> <span class="pre">(Nz+1)*hz]</span></code></p>
+</div>
+<dl class="method">
+<dt id="fkdrm.Receivers.DRMBox.DRMBox.add_to_response">
+<code class="descname">add_to_response</code><span class="sig-paren">(</span><em>z</em>, <em>e</em>, <em>n</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.DRMBox.DRMBox.add_to_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superimpose a new response to current response.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.DRMBox.DRMBox.get_nreceivers">
+<code class="descname">get_nreceivers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.DRMBox.DRMBox.get_nreceivers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of receivers of this class (for receiver containers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.DRMBox.DRMBox.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/DRMBox.html#DRMBox.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.DRMBox.DRMBox.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the next station in the group.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.DRMBox.DRMBox.set_dt">
+<code class="descname">set_dt</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="headerlink" href="#fkdrm.Receivers.DRMBox.DRMBox.set_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the time-step of the receiver</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.Receivers.DRMBox.DRMBox.write_response">
+<code class="descname">write_response</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/Receivers/DRMBox.html#DRMBox.write_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.Receivers.DRMBox.DRMBox.write_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Command the DRMBox to produce the output of last simulated values.
+Called by FKDRM.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Inheritance diagram:</p>
+<div class="graphviz"><img src="_images/inheritance-4bb36d44678e4aa87f1c800d93219d9bc1b6dd12.png" alt="Inheritance diagram of fkdrm.Receivers.DRMBox.DRMBox" usemap="#inheritance24558ea6b1" class="inheritance graphviz" /></div>
+<map id="inheritance24558ea6b1" name="inheritance24558ea6b1">
+<area shape="rect" id="node1" href="#fkdrm.Receivers.DRMBox.DRMBox" target="_top" title="A class to generate receiver layout useful in DRM." alt="" coords="533,5,763,29"/>
+<area shape="rect" id="node2" href="#fkdrm.Receivers.StationList.StationList" target="_top" title="This is a list of SimpleStations." alt="" coords="232,5,488,29"/>
+<area shape="rect" id="node3" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" target="_top" title="Receiver interface" alt="" coords="5,5,188,29"/>
+</map><p>.</p>
+</div>
+<div class="section" id="module-fkdrm.Receivers">
+<span id="module-contents"></span><h2><a class="toc-backref" href="#id6">Module contents</a><a class="headerlink" href="#module-fkdrm.Receivers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fkdrm.SourceTimeFunctions.html" class="btn btn-neutral float-right" title="SourceTimeFunctions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fkdrm.CrustModels.html" class="btn btn-neutral" title="CrustModels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

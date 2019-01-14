@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fkdrm.Receivers.SimpleStation &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../fkdrm.html">fkdrm python module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>fkdrm.Receivers.SimpleStation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fkdrm.Receivers.SimpleStation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">fkdrm.fkdrmBase</span> <span class="k">import</span> <span class="n">Receiver</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">cumtrapz</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">sig</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+
+<span class="k">def</span> <span class="nf">interpolator</span><span class="p">(</span><span class="n">told</span><span class="p">,</span> <span class="n">yold</span><span class="p">,</span> <span class="n">tnew</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">told</span><span class="p">,</span> <span class="n">yold</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">yold</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yold</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))(</span><span class="n">tnew</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SimpleStation"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation">[docs]</a><span class="k">class</span> <span class="nc">SimpleStation</span><span class="p">(</span><span class="n">Receiver</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This simple receiver stores response in memory. </span>
+
+<span class="sd">    Internally, numpy arrays are used for storage. Optional parameters allow filtering</span>
+<span class="sd">    of the response before outputting, althoiugh it is always stored</span>
+<span class="sd">    raw (unfiltered), therefore the user can experiment with</span>
+<span class="sd">    different filtering settings.</span>
+
+<span class="sd">    Results can be saved through the :func:`save` method and loaded with the :func:`load` function.</span>
+<span class="sd">    for posterior use. </span>
+
+<span class="sd">    :param x: xyz location of the station.</span>
+<span class="sd">    :type x: numpy array (3,)</span>
+<span class="sd">    :param filter_results: (optional) whether a filter should be applied to station response</span>
+<span class="sd">    :type filter_results: bool</span>
+<span class="sd">    :param filter_parameters: (optional) filter parameter settings (see below)</span>
+<span class="sd">    :type filter_parameters: dict</span>
+<span class="sd">    :param name: (optional) station name, used for plotting and other actions.</span>
+<span class="sd">    :type name: str</span>
+
+<span class="sd">    Filtering is performed using the :mod:`scipy.signal` module. A Butterworth filter </span>
+<span class="sd">    (:obj:`scipy.signal.butter`) is designed and applied using the acausal two-way</span>
+<span class="sd">    filter (:obj:`scipy.signal.filtfilt`) with constant padding using the edge values </span>
+<span class="sd">    of the response as padding values. </span>
+
+<span class="sd">    Filter parameter settings:</span>
+
+<span class="sd">    * ``filter_parameters[&#39;fmax&#39;]=10``: `(double)` Cut-off frequency for the low-pass filter in Hz. </span>
+<span class="sd">    * ``filter_parameters[&#39;btype&#39;]=&#39;low``: `(str)` Filter type </span>
+<span class="sd">    * ``filter_parameters[&#39;order&#39;]=3``: `(int)` Order of the filter. </span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        #Create a station at (10,10,0), setting filtering </span>
+<span class="sd">        # to an order 3 filter with a 3Hz cutoff.</span>
+<span class="sd">        station = SimpleStation([10,10,0], </span>
+<span class="sd">            filter_results=True, </span>
+<span class="sd">            filter_parameters={&#39;fmax&#39;:5., &#39;order&#39;:3})</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Default filter parameters</span>
+    <span class="n">filter_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">filter_params</span><span class="p">[</span><span class="s2">&quot;fmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.</span>
+    <span class="n">filter_params</span><span class="p">[</span><span class="s2">&quot;btype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;low&#39;</span>
+    <span class="n">filter_params</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">filter_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="c1">#Constructor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">returned</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="n">filter_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_params</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_parameters</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">filter_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">dofilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Npad</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        
+        <span class="n">fmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_params</span><span class="p">[</span><span class="s2">&quot;fmax&quot;</span><span class="p">]</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_params</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span>
+        <span class="n">btype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_params</span><span class="p">[</span><span class="s2">&quot;btype&quot;</span><span class="p">]</span>
+        <span class="n">fnyq</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">Wcrit</span> <span class="o">=</span> <span class="n">fmax</span><span class="o">/</span><span class="n">fnyq</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">A</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">butter</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">Wcrit</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="n">btype</span><span class="p">)</span>
+        <span class="n">Nt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Npad</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">Npad</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Npad</span><span class="p">,</span><span class="n">Npad</span><span class="p">),</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> 
+        <span class="n">y</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">filtfilt</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="n">Npad</span><span class="p">:(</span><span class="n">Npad</span><span class="o">+</span><span class="n">Nt</span><span class="p">)]</span>
+
+    
+<div class="viewcode-block" id="SimpleStation.add_to_response"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.add_to_response">[docs]</a>    <span class="k">def</span> <span class="nf">add_to_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="c1"># print &quot;SimpleStation.py - adding to response (init)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmin</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmax</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># print &quot;SimpleStation.py - adding to response (add)&quot;</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmin</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+            <span class="n">tmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmax</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">dt</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
+                <span class="nb">print</span> <span class="s2">&quot;Warning dt = </span><span class="si">{}</span><span class="s2"> != self.dt = </span><span class="si">{}</span><span class="s2">. Resampling at lowest rate&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+            <span class="n">tnew</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+            <span class="n">zz</span> <span class="o">=</span> <span class="n">interpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">tnew</span><span class="p">)</span>
+            <span class="n">zz</span> <span class="o">+=</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">tnew</span><span class="p">)</span>
+            <span class="n">ee</span> <span class="o">=</span> <span class="n">interpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">tnew</span><span class="p">)</span>
+            <span class="n">ee</span> <span class="o">+=</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">tnew</span><span class="p">)</span>
+            <span class="n">nn</span> <span class="o">=</span> <span class="n">interpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">tnew</span><span class="p">)</span>
+            <span class="n">nn</span> <span class="o">+=</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tnew</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">zz</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">ee</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">nn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">tnew</span></div>
+        <span class="c1"># print &quot;max zen = ({}, {}, {}) dt = {}  nt = {}&quot;.format(max(self.z),max(self.e),max(self.n),self.dt, len(self.t))</span>
+
+<div class="viewcode-block" id="SimpleStation.write_response"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.write_response">[docs]</a>    <span class="k">def</span> <span class="nf">write_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="SimpleStation.get_pos"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.get_pos">[docs]</a>    <span class="k">def</span> <span class="nf">get_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the position of the receiver station. </span>
+
+<span class="sd">        :returns: Position vector of the station.</span>
+<span class="sd">        :retval: numpy array shape=(3,)</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            x = station.get_pos()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span></div>
+
+<div class="viewcode-block" id="SimpleStation.get_response"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.get_response">[docs]</a>    <span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">do_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>        
+        <span class="sd">&quot;&quot;&quot;Return the recorded response of the station. </span>
+<span class="sd">        </span>
+<span class="sd">        :param do_filter: Will/won&#39;t filter if filter parameters have been set. (Most useful to disable filtering before return)</span>
+<span class="sd">        :type do_filter: bool</span>
+<span class="sd">    </span>
+<span class="sd">        :returns: Z (down), E (east), N (north), t (time) response of the station. </span>
+<span class="sd">        :retval: tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            z,e,n,t = station.get_response()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span> <span class="ow">and</span> <span class="n">do_filter</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dofilter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dofilter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dofilter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="c1"># return z[self.t&gt;=0], e[self.t&gt;=0], n[self.t&gt;=0], self.t[self.t&gt;=0]</span>
+        <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span></div>
+
+<div class="viewcode-block" id="SimpleStation.get_response_integral"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.get_response_integral">[docs]</a>    <span class="k">def</span> <span class="nf">get_response_integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntimes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">do_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the time-integral of the recorded response of the station. </span>
+<span class="sd">        </span>
+<span class="sd">        :param ntimes: How many times to time-integrate.</span>
+<span class="sd">        :type ntimes: int</span>
+<span class="sd">        :param do_filter: Will/won&#39;t filter if filter parameters have been set. (Most useful to disable filtering before return)</span>
+<span class="sd">        :param do_filter: bool</span>
+<span class="sd">    </span>
+<span class="sd">        :returns: Z (down), E (east), N (north), t (time) response of the station integrated ``ntimes`` in time</span>
+<span class="sd">        :retval: tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            z,e,n,t = station.get_response_integral()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ntimes</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">do_filter</span><span class="o">=</span><span class="n">do_filter</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ntimes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response_integral</span><span class="p">(</span><span class="n">ntimes</span><span class="o">=</span><span class="n">ntimes</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="s2">&quot;Station.get_response_integral() - ntimes must be &gt;= 0. Got ntimes = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nint</span><span class="p">)</span>
+        <span class="n">z_integrated</span> <span class="o">=</span> <span class="n">cumtrapz</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="n">e_integrated</span> <span class="o">=</span> <span class="n">cumtrapz</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="n">n_integrated</span> <span class="o">=</span> <span class="n">cumtrapz</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z_integrated</span><span class="p">,</span> <span class="n">e_integrated</span><span class="p">,</span> <span class="n">n_integrated</span><span class="p">,</span> <span class="n">t</span></div>
+
+<div class="viewcode-block" id="SimpleStation.get_response_derivative"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.get_response_derivative">[docs]</a>    <span class="k">def</span> <span class="nf">get_response_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntimes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">do_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the time-derivative of the recorded response of the station. </span>
+<span class="sd">        </span>
+<span class="sd">        :param ntimes: How many times to differentiate in time.</span>
+<span class="sd">        :type ntimes: int</span>
+<span class="sd">        :param do_filter: Will/won&#39;t filter if filter parameters have been set. (Most useful to disable filtering before return)</span>
+<span class="sd">        :param do_filter: bool</span>
+<span class="sd">    </span>
+<span class="sd">        :returns: Z (down), E (east), N (north), t (time) response of the station differentiated ``ntimes`` in time</span>
+<span class="sd">        :retval: tuple containing numpt arrays with z, e, n, t reponse (shape (Nt,))</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            z,e,n,t = station.get_response_derivative()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ntimes</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">do_filter</span><span class="o">=</span><span class="n">do_filter</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ntimes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response_derivative</span><span class="p">(</span><span class="n">ntimes</span><span class="o">=</span><span class="n">ntimes</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="s2">&quot;Station.get_response_derivative() - ntimes must be &gt;= 0. Got ntimes = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nint</span><span class="p">)</span>
+        <span class="n">z_differentiated</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">e_differentiated</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">n_differentiated</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z_differentiated</span><span class="p">,</span> <span class="n">e_differentiated</span><span class="p">,</span> <span class="n">n_differentiated</span><span class="p">,</span> <span class="n">t</span></div>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">returned</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+<div class="viewcode-block" id="SimpleStation.next"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">returned</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">returned</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SimpleStation.save"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Save the current station and all its data into a binary file (uses cPickle).</span>
+
+<span class="sd">        :param fname: File name to save to. </span>
+<span class="sd">        :type fname: str </span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            station.save(&quot;station.pickle&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+        <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fid</span><span class="p">)</span>
+        <span class="n">fid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SimpleStation.load"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.SimpleStation.SimpleStation.load">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Load station from file </span>
+
+<span class="sd">        :param fname: File name to save to. </span>
+<span class="sd">        :type fname: str </span>
+<span class="sd">        </span>
+<span class="sd">        :returns: Loaded station.</span>
+<span class="sd">        :rtype: :class:`SimpleStation`</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            station = SimpleStation.load(&quot;station.pickle&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="n">station</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">)</span>
+        <span class="n">fid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">station</span></div></div>
+
+
+
+
+<span class="n">Receiver</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">SimpleStation</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+<map id="inheritance24558ea6b1" name="inheritance24558ea6b1">
+<area shape="rect" id="node1" href="#fkdrm.Receivers.DRMBox.DRMBox" target="_top" title="A class to generate receiver layout useful in DRM." alt="" coords="533,5,763,29"/>
+<area shape="rect" id="node2" href="#fkdrm.Receivers.StationList.StationList" target="_top" title="This is a list of SimpleStations." alt="" coords="232,5,488,29"/>
+<area shape="rect" id="node3" href="fkdrm.html#fkdrm.fkdrmBase.Receiver" target="_top" title="Receiver interface" alt="" coords="5,5,188,29"/>
+</map>

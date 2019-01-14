@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Welcome to fkdrm’s documentation! &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="fkdrm python module" href="fkdrm.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="fkdrm.html">fkdrm python module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Welcome to fkdrm’s documentation!</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="welcome-to-fkdrm-s-documentation">
+<h1><a class="toc-backref" href="#id2">Welcome to fkdrm’s documentation!</a><a class="headerlink" href="#welcome-to-fkdrm-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>FKDRM is intended to provide a simple tool allowing earthquake engineers and seismologists
+to easily use the frequency-wavenumber method (hence FK) to produce ground-motion datasets
+for analysis using the Domain Reduction Method (DRM). DRM motions are stored directly
+into the H5DRM format.</p>
+<p>FK method, the core of FKDRM, is impemented in fortran (originally from <a class="reference external" href="http://www.eas.slu.edu/People/LZhu/home.html">http://www.eas.slu.edu/People/LZhu/home.html</a> with
+several modifications), and interfaced with python through f2py wrappers. Classes are built on
+top of this wrapper to simplify common modeling tasks such as crustal model specification,
+generation of source faults (from simple point sources to full kinematic rupture specifications),
+generating single recording stations, grids and other arrays of recording stations and stations
+arranged to meet the requirements of the DRM. Filtering and simple plotting tools are provided
+to ease model setup. Finally, computation of motion traces is done by pairing all sources
+and all receivers, which is parallelized using MPI. This means that FKDRM can run on
+simple personal computers all the way up to large supercomputing clusters.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#welcome-to-fkdrm-s-documentation" id="id2">Welcome to fkdrm’s documentation!</a><ul>
+<li><a class="reference internal" href="#dependencies" id="id3">Dependencies</a></li>
+<li><a class="reference internal" href="#installation" id="id4">Installation</a></li>
+<li><a class="reference internal" href="#quickstart-usage" id="id5">Quickstart usage</a></li>
+<li><a class="reference internal" href="#parallel-computation-capabilities" id="id6">Parallel computation capabilities</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation" id="id7">Documentation</a></li>
+<li><a class="reference internal" href="#indices-and-tables" id="id8">Indices and tables</a></li>
+</ul>
+</div>
+<div class="section" id="dependencies">
+<h2><a class="toc-backref" href="#id3">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>We stand on the shoulder’s of giants. <cite>fkdrm</cite> depends on the following python modules (most)
+to work its magic.</p>
+<ul class="simple">
+<li><cite>mpi4py</cite> (optional but highly recommended for parallel computing of the response)</li>
+<li><cite>h5py</cite></li>
+<li><cite>numpy</cite></li>
+<li><cite>scipy</cite></li>
+<li><cite>matplotlib</cite> (optional, for plotting)</li>
+<li><cite>tqdm</cite> (optional, for a fancy progressbar)</li>
+</ul>
+<p>Get them all with <cite>pip</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">mpi4py</span> <span class="n">h5py</span> <span class="n">numpy</span> <span class="n">scipy</span> <span class="n">matplotlib</span> <span class="n">tqdm</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation">
+<h2><a class="toc-backref" href="#id4">Installation</a><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>For now, only though the git repo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">jaabell</span><span class="o">/</span><span class="n">FKDRM</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>Use the <cite>setup.py</cite> script, using setuptools, to compile and install:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>If you dont’ have <cite>sudo</cite>, you need:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+<p>Build the documenation with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build_sphinx</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="quickstart-usage">
+<h2><a class="toc-backref" href="#id5">Quickstart usage</a><a class="headerlink" href="#quickstart-usage" title="Permalink to this headline">¶</a></h2>
+<p>Using fkdrm is simple. You need to specify a <a class="reference internal" href="fkdrm.html#module-fkdrm.CrustModel" title="fkdrm.CrustModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fkdrm.CrustModel</span></code></a> (choose from the available
+predefined models or create your own), a <code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.SourceModel</span></code> (from a simple
+<code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Receivers.PointSource</span></code> to a complex fully-customizable extended source with <code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Receivers.MathyFaultPlane</span></code>)
+and, finally, a <code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Receiver</span></code> specifying a place to record motions (and store them
+in memory or text format).</p>
+<p>In this simple example, we specify a simple strike-slip (strike=30, clockwise from north)
+point source at the origin and a depth of 4km, on a custom two-layer crustal model,
+and a single receiver 5km away to the north.</p>
+<p>Start by importing the needed components:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#./doc/examples/example_0_quick_example.py</span>
+<span class="kn">from</span> <span class="nn">fkdrm</span> <span class="k">import</span> <span class="n">fkdrm</span>
+<span class="kn">from</span> <span class="nn">fkdrm.CrustModel</span> <span class="k">import</span> <span class="n">CrustModel</span>
+<span class="kn">from</span> <span class="nn">fkdrm.Sources</span> <span class="k">import</span> <span class="n">PointSource</span>
+<span class="kn">from</span> <span class="nn">fkdrm.Receivers</span> <span class="k">import</span> <span class="n">SimpleStation</span>
+</pre></div>
+</div>
+<p>Create a new two-layer CrustModel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">crust</span> <span class="o">=</span> <span class="n">CrustModel</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1">#Slow layer</span>
+<span class="n">Vp</span><span class="o">=</span><span class="mf">4.000</span>                        <span class="c1"># P-wave speed (km/s)</span>
+<span class="n">Vs</span><span class="o">=</span><span class="mf">2.000</span>                        <span class="c1"># S-wave speed (km/s)</span>
+<span class="n">rho</span><span class="o">=</span><span class="mf">2.600</span>                       <span class="c1"># Density (gm/cm**3)</span>
+<span class="n">Qp</span><span class="o">=</span><span class="mf">10000.</span>                       <span class="c1"># Q-factor for P-wave</span>
+<span class="n">Qs</span><span class="o">=</span><span class="mf">10000.</span>                       <span class="c1"># Q-factor for S-wave</span>
+<span class="n">thickness</span> <span class="o">=</span> <span class="mf">1.0</span>         <span class="c1"># Self-explanatory</span>
+<span class="n">crust</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">thickness</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">Vs</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">Qp</span><span class="p">,</span> <span class="n">Qs</span><span class="p">)</span>
+
+<span class="c1">#Halfspace</span>
+<span class="n">Vp</span><span class="o">=</span><span class="mf">6.000</span>
+<span class="n">Vs</span><span class="o">=</span><span class="mf">3.464</span>
+<span class="n">rho</span><span class="o">=</span><span class="mf">2.700</span>
+<span class="n">Qp</span><span class="o">=</span><span class="mf">10000.</span>
+<span class="n">Qs</span><span class="o">=</span><span class="mf">10000.</span>
+<span class="n">thickness</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1">#Zero thickness --&gt; half space</span>
+<span class="n">crust</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">thickness</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">Vs</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">Qp</span><span class="p">,</span> <span class="n">Qs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Specify source location (xyz coordinates: x is north, y is east, z is down)
+and strike, dip and rake angles:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Specify receiver location (xyz as before):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">receiver</span> <span class="o">=</span> <span class="n">SimpleStation</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>These are fed into the FKDRM model class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">fkdrm</span><span class="o">.</span><span class="n">fkdrm</span><span class="p">(</span><span class="n">crust</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">receiver</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Which is executed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Results at the station can be readily visualized using the utility function <code class="xref py py-func docutils literal notranslate"><span class="pre">Tools.Plotting.ZENTPlot()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fkdrm.Tools.Plotting</span> <span class="k">import</span> <span class="n">ZENTPlot</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ZENTPlot</span><span class="p">(</span><span class="n">receiver</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This script can be executed from the command line as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">example_0_quick_example</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Yielding:</p>
+<div class="figure align-center" id="id1">
+<img alt="_images/example_0_quick_example.png" src="_images/example_0_quick_example.png" />
+<p class="caption"><span class="caption-text">Response at receiver station. No source time function was specified,
+so this is just a Greens function (impulse response) of the
+medium.</span></p>
+</div>
+</div>
+<div class="section" id="parallel-computation-capabilities">
+<h2><a class="toc-backref" href="#id6">Parallel computation capabilities</a><a class="headerlink" href="#parallel-computation-capabilities" title="Permalink to this headline">¶</a></h2>
+<p>To make use of multi-processor architechtures and computer clusters, FKDRM
+is parallelized internally using <cite>mpi4py</cite>. Running a script in parallel
+processing mode is simply done using an <cite>mpirun</cite> call, no modifications
+to the script are necessary:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mpirun</span> <span class="o">-</span><span class="n">np</span> <span class="mi">10</span> <span class="n">python</span> <span class="o">&lt;</span><span class="n">script</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation">
+<h1><a class="toc-backref" href="#id7">Documentation</a><a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fkdrm.html">fkdrm python module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fkdrm.html#fkdrm-main-class">fkdrm main class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#simulation-parameters">Simulation parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#modeling-subclasses">Modeling Subclasses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#module-fkdrm.CrustModel">CrustModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fkdrm.html#module-fkdrm.fkdrmBase">fkdrmBase - Abstract Base Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1><a class="toc-backref" href="#id8">Indices and tables</a><a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fkdrm.html" class="btn btn-neutral float-right" title="fkdrm python module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

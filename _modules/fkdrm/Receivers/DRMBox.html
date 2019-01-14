@@ -1,0 +1,739 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fkdrm.Receivers.DRMBox &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../fkdrm.html">fkdrm python module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>fkdrm.Receivers.DRMBox</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fkdrm.Receivers.DRMBox</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">fkdrm.Receivers</span> <span class="k">import</span> <span class="n">SimpleStation</span>
+<span class="kn">from</span> <span class="nn">fkdrm.Receivers</span> <span class="k">import</span> <span class="n">StationList</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">fkdrm.fkdrmBase</span> <span class="k">import</span> <span class="n">Receiver</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">h5py</span> 
+<span class="kn">import</span> <span class="nn">imp</span> 
+
+
+<span class="c1">#Find if mpi4py is available</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="s1">&#39;mpi4py&#39;</span><span class="p">)</span>
+    <span class="n">found_mpi4py</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">found_mpi4py</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">if</span> <span class="n">found_mpi4py</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
+    <span class="n">use_mpi</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+    <span class="n">nprocs</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">nprocs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">use_mpi</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="c1">#Interpolator function</span>
+<span class="k">def</span> <span class="nf">interpolator</span><span class="p">(</span><span class="n">told</span><span class="p">,</span> <span class="n">yold</span><span class="p">,</span> <span class="n">tnew</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">told</span><span class="p">,</span> <span class="n">yold</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">yold</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yold</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))(</span><span class="n">tnew</span><span class="p">)</span>
+
+
+<span class="c1"># Define new station class, useful only within the context of the DRMBox </span>
+<span class="k">class</span> <span class="nc">DRMStation</span><span class="p">(</span><span class="n">SimpleStation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A specialization of the SimpleStation Receiver class, with added functionality</span>
+<span class="sd">    for processing of DRM motions.</span>
+
+<span class="sd">    :param x: xyz location of the station.</span>
+<span class="sd">    :type x: numpy array (3,)</span>
+<span class="sd">    :param internal: mark if its an internal or external DRM station</span>
+<span class="sd">    :type internal: bool</span>
+<span class="sd">    :param filter_results: (optional) whether a filter should be applied to station response</span>
+<span class="sd">    :type filter_results: bool</span>
+<span class="sd">    :param filter_params: (optional) filter parameter settings (see :class:`Receivers.SimpleStation`)</span>
+<span class="sd">    :type filter_params: dict</span>
+<span class="sd">    :param name: (optional) station name </span>
+<span class="sd">    :type name: str</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        This class is intended for internal use by :class:`Receivers.DRMBox`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">drmbox</span><span class="p">,</span> <span class="n">internal</span><span class="p">,</span> <span class="n">filter_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+
+        <span class="n">SimpleStation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">filter_results</span><span class="o">=</span><span class="n">filter_results</span><span class="p">,</span> <span class="n">filter_parameters</span><span class="o">=</span><span class="n">filter_parameters</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drmbox</span> <span class="o">=</span> <span class="n">drmbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal</span> <span class="o">=</span> <span class="n">internal</span>
+
+    <span class="k">def</span> <span class="nf">add_to_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;See :class:`Receivers.SimpleStation.add_to_response`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">drmbox</span><span class="o">.</span><span class="n">__report_time_vector__</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SimpleStation</span><span class="o">.</span><span class="n">add_to_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether current station is in the internal boundary of the DRM box. </span>
+
+<span class="sd">        The __init__ method may be documented in either the class level</span>
+<span class="sd">        docstring, or as a docstring on the __init__ method itself.</span>
+
+<span class="sd">        Either form is acceptable, but the two should not be mixed. Choose one</span>
+<span class="sd">        convention to document the __init__ method and be consistent with it.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Do not include the `self` parameter in the ``Args`` section.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool. `True` if this station is internal to the DRM box. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">internal</span>
+
+
+
+<span class="c1">#Definition of the DRM planes</span>
+<span class="k">class</span> <span class="nc">Plane</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A helper class to define the planes of the sides of the DRM box. </span>
+
+<span class="sd">    :param v0: Origin ofset in xyz coordinates. </span>
+<span class="sd">    :type v0: numpy array (3,)</span>
+<span class="sd">    :param v1: Direction vector of 1 local plane coordinate in xyz coordinates. (Magnitude is the length of the side).</span>
+<span class="sd">    :type v1: numpy array (3,)</span>
+<span class="sd">    :param v2: Direction vector of 2 local plane coordinate in xyz coordinates. (Magnitude is the length of the side).</span>
+<span class="sd">    :type v2: numpy array (3,)</span>
+<span class="sd">    :param k: Plane tag</span>
+<span class="sd">    :type k: int</span>
+<span class="sd">    :param internal: True if plane is represents an internal boundary of the DRM box. </span>
+<span class="sd">    :type internal: bool</span>
+<span class="sd">    :param xi1: Natural coordinate grid of the plane. Defines spacing of stations in the 1 direction. Should be monotonically increasing spanning the interval [0,1] (including the edges)</span>
+<span class="sd">    :type xi1: numpy array (N1,)</span>
+<span class="sd">    :param xi2: Natural coordinate grid of the plane. Defines spacing of stations in the 2 direction. Should be monotonically increasing spanning the interval [0,1] (including the edges)</span>
+<span class="sd">    :type xi2: numpy array (N2,)</span>
+
+<span class="sd">    Note:</span>
+
+<span class="sd">    This class is intended for internal use by :class:`Receivers.DRMBox`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">internal</span><span class="p">,</span> <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">v0</span> <span class="o">=</span> <span class="n">v0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v1</span> <span class="o">=</span> <span class="n">v1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v2</span> <span class="o">=</span> <span class="n">v2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal</span> <span class="o">=</span> <span class="n">internal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">xi1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xi2</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi1</span> <span class="o">=</span> <span class="n">xi1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi2</span> <span class="o">=</span> <span class="n">xi2</span>
+
+
+    <span class="k">def</span> <span class="nf">set_station_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">station_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the station_id for the station at the (i,j) in the local plane of the grid.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stations</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">station_id</span>
+
+    <span class="k">def</span> <span class="nf">write_me_into_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Writes the information of the plane into an HDF5 dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param f: HDF5 file or group handle. </span>
+<span class="sd">            :type f: h5py object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;v0&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v0</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v1</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;v2&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v2</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;internal&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">internal</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;stations&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stations</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;xi1&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xi1</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;xi2&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xi2</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="DRMBox"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.DRMBox.DRMBox">[docs]</a><span class="k">class</span> <span class="nc">DRMBox</span><span class="p">(</span><span class="n">StationList</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class to generate receiver layout useful in DRM.</span>
+
+<span class="sd">    .. figure::  ../docs/images/drmbox.png</span>
+<span class="sd">       :scale: 60%</span>
+<span class="sd">       :align:   center</span>
+
+<span class="sd">    </span>
+<span class="sd">    :param pos:  Center point of the DRM box in xyz coordinates. </span>
+<span class="sd">    :type pos: (numpy array (3,))</span>
+<span class="sd">    :param Nelem:  Number of elements (stations) in each direction. ``Nelem = [Nx, Ny, Nz]``</span>
+<span class="sd">    :type Nelem: (int)</span>
+<span class="sd">    :param h:  Spacings in each direction ``h = [hx, hy, hz]``</span>
+<span class="sd">    :type h: (double)</span>
+<span class="sd">    :param azimuth:  Azimuthal orientation of the box. </span>
+<span class="sd">    :type azimuth: (double)</span>
+<span class="sd">    :param crust:  Crust properties. </span>
+<span class="sd">    :type crust: (:obj:`fkdrm.CrustModel`)</span>
+<span class="sd">    :param filter_results:  (See :obj:`fkdrm.Receivers.SimpleStation`)</span>
+<span class="sd">    :type filter_results: (bool)</span>
+<span class="sd">    :param filter_parameters: (See :obj:`fkdrm.Receivers.SimpleStation`)</span>
+<span class="sd">    :type filter_parameters: (dict)</span>
+<span class="sd">    :param name: </span>
+<span class="sd">    :type name: (str)</span>
+<span class="sd">    :param x_qa:  List of points where QA data is requested. </span>
+<span class="sd">    :type x_qa: list of numpy array (3,)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Side lengths of the DRM box are ``[Nx*hx, Ny*hy, Nz*hz]`` up to the interior</span>
+<span class="sd">        boundary of the box. Exterior boundary has side lengths: ``[(Nx+2)*hx, (Ny+2)*hy, (Nz+1)*hz]``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">Nelem</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">crust</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">filter_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">x_qa</span> <span class="o">=</span> <span class="p">[]):</span>
+
+        <span class="c1">#Data members</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Nelem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="n">azimuth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_results</span> <span class="o">=</span> <span class="n">filter_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_parameters</span> <span class="o">=</span> <span class="n">filter_parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nstations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nplanes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">planes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcvlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_qa</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tstart</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tend</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+
+        <span class="c1">#Define QA stations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_qa</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_qa</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_qa</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__create_QA_stations__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__create_DRM_stations__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__initialize_HDF5_dataset__</span><span class="p">()</span>
+    
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1">#Receiver interface</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+
+        <span class="c1"># Defer __iter__ to base StationList class </span>
+        <span class="n">StationList</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+<div class="viewcode-block" id="DRMBox.next"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.DRMBox.DRMBox.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Get the next station in the group. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Defer next to base StationList class</span>
+        <span class="k">return</span> <span class="n">StationList</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DRMBox.write_response"><a class="viewcode-back" href="../../../fkdrm.Receivers.html#fkdrm.Receivers.DRMBox.DRMBox.write_response">[docs]</a>    <span class="k">def</span> <span class="nf">write_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;write_response()</span>
+
+<span class="sd">        Command the DRMBox to produce the output of last simulated values.</span>
+<span class="sd">        Called by FKDRM.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__write_HDF5_DRM_output__</span><span class="p">()</span></div>
+
+
+
+    <span class="c1">##=========================================================================</span>
+    <span class="c1">#Private methods</span>
+    <span class="c1">##=========================================================================</span>
+
+    <span class="k">def</span> <span class="nf">__create_QA_stations__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__create_QA_stations__</span>
+
+<span class="sd">        Private method in DRMBox. User should not need to call. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_qa</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__newstation__</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__create_DRM_stations__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__create_DRM_stations__</span>
+
+<span class="sd">        Private method in DRMBox. User should not need to call. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1">#DRM box orientation (TODO: add azimuthal rotation)</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">])</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mf">0.</span><span class="p">])</span>
+        <span class="n">e3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">])</span>
+
+        <span class="c1">#Inner boundary</span>
+        <span class="n">internal</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">Nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Ny</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">Nz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">hx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">hy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">hz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">lx</span> <span class="o">=</span> <span class="n">Nx</span> <span class="o">*</span> <span class="n">hx</span>
+        <span class="n">ly</span> <span class="o">=</span> <span class="n">Ny</span> <span class="o">*</span> <span class="n">hy</span>
+        <span class="n">lz</span> <span class="o">=</span> <span class="n">Nz</span> <span class="o">*</span> <span class="n">hz</span>
+        <span class="n">xi_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">Nx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xi_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">Ny</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xi_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">Nz</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">+</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="n">ly</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">+</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">+</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="o">-</span><span class="n">lx</span><span class="o">*</span><span class="n">e1</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">-</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">+</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="o">-</span><span class="n">ly</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">-</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="n">lx</span><span class="o">*</span><span class="n">e1</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">-</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span> <span class="o">+</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lx</span><span class="o">*</span><span class="n">e1</span><span class="p">,</span> <span class="n">ly</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">xi_y</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+
+        <span class="c1">#Outer boundary</span>
+        <span class="n">internal</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">Nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span>
+        <span class="n">Ny</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span>
+        <span class="n">Nz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">hx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">hy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">hz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">lx</span> <span class="o">=</span> <span class="n">Nx</span> <span class="o">*</span> <span class="n">hx</span>
+        <span class="n">ly</span> <span class="o">=</span> <span class="n">Ny</span> <span class="o">*</span> <span class="n">hy</span>
+        <span class="n">lz</span> <span class="o">=</span> <span class="n">Nz</span> <span class="o">*</span> <span class="n">hz</span>
+        <span class="n">xi_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">Nx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xi_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">Ny</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xi_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">Nz</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">+</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="n">ly</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">+</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">+</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="o">-</span><span class="n">lx</span><span class="o">*</span><span class="n">e1</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">-</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">+</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="o">-</span><span class="n">ly</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">-</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span><span class="p">,</span> <span class="n">lx</span><span class="o">*</span><span class="n">e1</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_z</span><span class="p">,</span> <span class="n">xi_x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">-</span> <span class="p">(</span><span class="n">lx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ly</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">e2</span> <span class="o">+</span> <span class="n">lz</span><span class="o">*</span><span class="n">e3</span>
+        <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">lx</span><span class="o">*</span><span class="n">e1</span><span class="p">,</span> <span class="n">ly</span><span class="o">*</span><span class="n">e2</span>
+        <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span> <span class="o">=</span> <span class="n">xi_x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">xi_y</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__new_DRM_plane__</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi1</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span>
+
+        <span class="n">StationList</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rcvlist</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__newstation__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">internal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__newstation__</span>
+
+<span class="sd">        Private method in DRMBox. User should not need to call. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">station_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nstations</span>
+        <span class="n">newrcv</span> <span class="o">=</span> <span class="n">DRMStation</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">],</span> <span class="bp">self</span><span class="p">,</span> <span class="n">internal</span><span class="p">,</span> <span class="n">filter_results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_results</span><span class="p">,</span> <span class="n">filter_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_parameters</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;.</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcvlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newrcv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nstations</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">station_id</span>
+
+
+    <span class="k">def</span> <span class="nf">__new_DRM_plane__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">xi</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">internal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__new_DRM_plane__</span>
+
+<span class="sd">        Private method in DRMBox. User should not need to call. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">newplane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nplanes</span><span class="p">,</span><span class="n">internal</span><span class="p">,</span><span class="n">xi</span><span class="p">,</span><span class="n">eta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">planes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newplane</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">xi</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">eta</span><span class="o">.</span><span class="n">size</span><span class="p">)):</span>
+            <span class="n">xi_</span><span class="p">,</span> <span class="n">eta_</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">eta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">v0</span> <span class="o">+</span> <span class="n">xi_</span><span class="o">*</span><span class="n">v1</span> <span class="o">+</span> <span class="n">eta_</span><span class="o">*</span><span class="n">v2</span>
+            <span class="n">station_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__newstation__</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nplanes</span><span class="p">,</span><span class="n">internal</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_qa</span><span class="p">)</span>
+            <span class="n">newplane</span><span class="o">.</span><span class="n">set_station_id</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">station_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nplanes</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+    <span class="k">def</span> <span class="nf">__report_time_vector__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__report_time_vector__</span>
+
+<span class="sd">        Private method in DRMBox. User should not need to call. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tstart</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tstart</span><span class="p">,</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tend</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tend</span><span class="p">,</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+    <span class="k">def</span> <span class="nf">__initialize_HDF5_dataset__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__initialize_HDF5_dataset__</span>
+
+<span class="sd">        Private method in DRMBox. User should not need to call. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1">#Form filename and create HDF5 dataset</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;DRMcase&quot;</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.h5drm&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+        <span class="c1">#Create groups</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;/DRM_Data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_QA_Data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;/DRM_QA_Data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Planes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;/DRM_Planes&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;/DRM_Metadata&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_ProgramMetadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;ProgramMetadata&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">FKDRM - DRMBox - Creating dataset at: &quot;</span><span class="p">,</span> <span class="n">fname</span>
+        
+        <span class="c1">#Write planes info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Planes</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;nplanes&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nplanes</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">plane</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planes</span><span class="p">):</span>
+            <span class="n">grp_this_plane</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Planes</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;plane_</span><span class="si">{0:02.0f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">plane</span><span class="o">.</span><span class="n">write_me_into_dataset</span><span class="p">(</span><span class="n">grp_this_plane</span><span class="p">)</span>
+
+        <span class="c1">#Write DRM minimum Metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;fmax&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;tstart&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;tend&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;program_used&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;fkdrm&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;download_url&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;reference_doi&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;created_by&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;created_on&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drmbox_xmax&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drmbox_xmin&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drmbox_ymax&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drmbox_ymin&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drmbox_zmax&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drmbox_zmin&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drmbox_x0&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="c1">#Write FKDRM Metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_ProgramMetadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;Nelem&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Nelem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_ProgramMetadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;azimuth&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_ProgramMetadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;nstations&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nstations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_ProgramMetadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;nplanes&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nplanes</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__write_HDF5_DRM_output__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__write_HDF5_DRM_output__</span>
+
+<span class="sd">        Private method in DRMBox. User should not need to call. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">][()]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="p">[</span><span class="s2">&quot;tstart&quot;</span><span class="p">][()]</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tstart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Metadata</span><span class="p">[</span><span class="s2">&quot;tend&quot;</span><span class="p">][()]</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tend</span>
+
+        
+        <span class="c1">#Compute global time vector</span>
+        <span class="n">t_drm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">nt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_drm</span><span class="p">)</span>
+
+        <span class="n">n_qa_stations</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_qa</span><span class="p">)</span>
+        <span class="n">n_recording_stations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nstations</span> <span class="o">-</span> <span class="n">n_qa_stations</span>
+
+        <span class="n">data_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n_recording_stations</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span>
+
+        <span class="c1">#Create data and QA datasets</span>
+        <span class="n">velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;velocity&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">n_recording_stations</span><span class="p">,</span> <span class="n">nt</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">nt</span><span class="p">))</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_recording_stations</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+        <span class="n">internal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;internal&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">n_recording_stations</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">id_data_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_Data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;data_location&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_location</span><span class="p">)</span>
+        <span class="n">velocity_qa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_QA_Data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;velocity&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">n_qa_stations</span><span class="p">,</span> <span class="n">nt</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">nt</span><span class="p">))</span>
+        <span class="n">xyz_qa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grp_DRM_QA_Data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_qa_stations</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+
+
+        <span class="c1">#Write velocity data into data each dataset</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rcv</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">rcv</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
+            <span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">rcv</span><span class="o">.</span><span class="n">get_response</span><span class="p">()</span>
+            <span class="n">zz</span> <span class="o">=</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">t_drm</span><span class="p">)</span>
+            <span class="n">ee</span> <span class="o">=</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">t_drm</span><span class="p">)</span>
+            <span class="n">nn</span> <span class="o">=</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t_drm</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_qa_stations</span><span class="p">:</span>
+                <span class="n">velocity_qa</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ee</span>
+                <span class="n">velocity_qa</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">nn</span>
+                <span class="n">velocity_qa</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">zz</span>
+                <span class="n">xyz_qa</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">I</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">n_qa_stations</span>
+                <span class="n">velocity</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">I</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ee</span>
+                <span class="n">velocity</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">I</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">nn</span>
+                <span class="n">velocity</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">I</span><span class="o">+</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">zz</span>
+                <span class="n">xyz</span><span class="p">[</span><span class="n">I</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="n">internal</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="o">=</span> <span class="n">rcv</span><span class="o">.</span><span class="n">is_internal</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">FKDRM - DRMBox - Done</span><span class="se">\n\n</span><span class="s2"> &quot;</span></div>
+
+<span class="n">Receiver</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">DRMBox</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

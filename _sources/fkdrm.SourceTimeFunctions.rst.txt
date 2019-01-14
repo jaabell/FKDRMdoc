@@ -1,0 +1,53 @@
+SourceTimeFunctions
+=========================
+
+
+Brune 
+--------------------------------------
+
+.. automodule:: fkdrm.SourceTimeFunctions.Brune
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Dirac 
+--------------------------------------
+
+.. automodule:: fkdrm.SourceTimeFunctions.Dirac
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Discrete 
+-----------------------------------------
+
+.. automodule:: fkdrm.SourceTimeFunctions.Discrete
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Gaussian 
+-----------------------------------------
+
+.. automodule:: fkdrm.SourceTimeFunctions.Gaussian
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MathFunction 
+---------------------------------------------
+
+.. automodule:: fkdrm.SourceTimeFunctions.MathFunction
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: fkdrm.SourceTimeFunctions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

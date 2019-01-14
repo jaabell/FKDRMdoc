@@ -1,0 +1,736 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fkdrm python module &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CrustModels" href="fkdrm.CrustModels.html" />
+    <link rel="prev" title="Welcome to fkdrm’s documentation!" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">fkdrm python module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fkdrm-main-class">fkdrm main class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulation-parameters">Simulation parameters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#less-important-parameters">Less important parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#modeling-subclasses">Modeling Subclasses</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.CrustModels.html">CrustModels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.Receivers.html">Receivers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.SourceTimeFunctions.html">SourceTimeFunctions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.Sources.html">Sources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fkdrm.Tools.html">Misc Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-fkdrm.CrustModel">CrustModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-fkdrm.fkdrmBase">fkdrmBase - Abstract Base Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>fkdrm python module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/fkdrm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="fkdrm-python-module">
+<h1>fkdrm python module<a class="headerlink" href="#fkdrm-python-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="fkdrm-main-class">
+<h2>fkdrm main class<a class="headerlink" href="#fkdrm-main-class" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="fkdrm.fkdrm.fkdrm">
+<em class="property">class </em><code class="descclassname">fkdrm.fkdrm.</code><code class="descname">fkdrm</code><span class="sig-paren">(</span><em>crust</em>, <em>source</em>, <em>receiver</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the main class in fkdrm, used to define a model, link components, 
+set simulation  parameters and execute it.</p>
+<dl class="method">
+<dt id="fkdrm.fkdrm.fkdrm.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>crust</em>, <em>source</em>, <em>receiver</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>crust</strong> (<a class="reference internal" href="#module-fkdrm.CrustModel" title="fkdrm.CrustModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrustModel</span></code></a>) – Crustal model used by the simulation.</li>
+<li><strong>source</strong> (<a class="reference internal" href="#fkdrm.fkdrmBase.SourceModel" title="fkdrm.fkdrmBase.SourceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrmBase.SourceModel</span></code></a>) – Source model(s). Choose from <a class="reference internal" href="fkdrm.Sources.html#module-fkdrm.Sources" title="fkdrm.Sources"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Sources</span></code></a></li>
+<li><strong>receiver</strong> (<a class="reference internal" href="#fkdrm.fkdrmBase.Receiver" title="fkdrm.fkdrmBase.Receiver"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrmBase.Receiver</span></code></a>) – Receiver station(s). Choose from <a class="reference internal" href="fkdrm.Receivers.html#module-fkdrm.Receivers" title="fkdrm.Receivers"><code class="xref py py-class docutils literal notranslate"><span class="pre">fkdrm.Receivers</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrm.fkdrm.get_nprocs">
+<code class="descname">get_nprocs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm.get_nprocs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.get_nprocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>In parallel runs. Return number of processes used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrm.fkdrm.get_parameter">
+<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>parameter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm.get_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.get_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of any simulation parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameter</strong> (<em>str</em>) – Name of the parameter to query.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrm.fkdrm.get_rank">
+<code class="descname">get_rank</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm.get_rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.get_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>In parallel runs. Return id of current process (starting from 0)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrm.fkdrm.is_master_process">
+<code class="descname">is_master_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm.is_master_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.is_master_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if this is the master process.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrm.fkdrm.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>debug_subgreen=False</em>, <em>debug_mpi=False</em>, <em>progressbar=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>debug_subgreen</strong> (<em>bool</em>) – Print internal debug information.</li>
+<li><strong>debug_mpi</strong> (<em>bool</em>) – Print debug information concerning parallel runs .</li>
+<li><strong>progressbar</strong> (<em>bool</em>) – Show fancy progressbar (uses tqdm)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrm.fkdrm.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrm.html#fkdrm.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set any of the fkdrm simulation parameters.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="simulation-parameters">
+<h3>Simulation parameters<a class="headerlink" href="#simulation-parameters" title="Permalink to this headline">¶</a></h3>
+<p>These are the parameters that control the conditions of the simulations.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In general, user will only need to play with <code class="docutils literal notranslate"><span class="pre">nfft</span></code>, <code class="docutils literal notranslate"><span class="pre">dt</span></code> and possibly <code class="docutils literal notranslate"><span class="pre">tb</span></code>.</p>
+</div>
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.nfft">
+<code class="descclassname">fkdrm.</code><code class="descname">nfft</code><em class="property"> = 4096</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.nfft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of time-points to use in fft</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.dt">
+<code class="descclassname">fkdrm.</code><code class="descname">dt</code><em class="property"> = 0.05</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulation time-step</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.tb">
+<code class="descclassname">fkdrm.</code><code class="descname">tb</code><em class="property"> = 1000</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.tb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepend <cite>tb</cite> points before time history to avoid wrapping effects</p>
+</dd></dl>
+
+<div class="section" id="less-important-parameters">
+<h4>Less important parameters<a class="headerlink" href="#less-important-parameters" title="Permalink to this headline">¶</a></h4>
+<div class="toggle docutils container">
+<div class="header docutils container">
+(Click to view)</div>
+<div class="docutils container">
+<p>They don’t need tweaking in general.</p>
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.sigma">
+<code class="descclassname">fkdrm.</code><code class="descname">sigma</code><em class="property"> = 2</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.sigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.taper">
+<code class="descclassname">fkdrm.</code><code class="descname">taper</code><em class="property"> = 0.5</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.taper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.smth">
+<code class="descclassname">fkdrm.</code><code class="descname">smth</code><em class="property"> = 1</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.smth" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.wc1">
+<code class="descclassname">fkdrm.</code><code class="descname">wc1</code><em class="property"> = 1</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.wc1" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.wc2">
+<code class="descclassname">fkdrm.</code><code class="descname">wc2</code><em class="property"> = 1</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.wc2" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.pmin">
+<code class="descclassname">fkdrm.</code><code class="descname">pmin</code><em class="property"> = 0.0</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.pmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.pmax">
+<code class="descclassname">fkdrm.</code><code class="descname">pmax</code><em class="property"> = 1.0</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.pmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.dk">
+<code class="descclassname">fkdrm.</code><code class="descname">dk</code><em class="property"> = 0.1</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.dk" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.kc">
+<code class="descclassname">fkdrm.</code><code class="descname">kc</code><em class="property"> = 15.0</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.kc" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fkdrm.fkdrm.fkdrm.nx">
+<code class="descclassname">fkdrm.</code><code class="descname">nx</code><em class="property"> = 1</em><a class="headerlink" href="#fkdrm.fkdrm.fkdrm.nx" title="Permalink to this definition">¶</a></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">sigma</code><em class="property"> = 2</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">smth</code><em class="property"> = 1</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">wc1</code><em class="property"> = 1</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">wc2</code><em class="property"> = 1</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">pmin</code><em class="property"> = 0.0</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">pmax</code><em class="property"> = 1.0</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">dk</code><em class="property"> = 0.1</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">fkdrm.</code><code class="descname">kc</code><em class="property"> = 15.0</em></dt>
+<dd><p>(George.. please provide one-line description!)</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="modeling-subclasses">
+<h3>Modeling Subclasses<a class="headerlink" href="#modeling-subclasses" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fkdrm.CrustModels.html">CrustModels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fkdrm.Receivers.html">Receivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fkdrm.SourceTimeFunctions.html">SourceTimeFunctions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fkdrm.Sources.html">Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fkdrm.Tools.html">Misc Tools</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-fkdrm.CrustModel">
+<span id="crustmodel"></span><h3>CrustModel<a class="headerlink" href="#module-fkdrm.CrustModel" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="fkdrm.CrustModel.CrustModel">
+<em class="property">class </em><code class="descclassname">fkdrm.CrustModel.</code><code class="descname">CrustModel</code><span class="sig-paren">(</span><em>nlayers=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define a 1-D layered crust model.</p>
+<dl class="method">
+<dt id="fkdrm.CrustModel.CrustModel.add_layer">
+<code class="descname">add_layer</code><span class="sig-paren">(</span><em>d</em>, <em>vp</em>, <em>vs</em>, <em>rho</em>, <em>qp</em>, <em>qs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel.add_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel.add_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new layer to the model.</p>
+<p>This function must be called as many times as layers were specified when the
+CrustModel was defined. Layer are stacked from top (surface) to bottom.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>d</strong> (<em>double &gt; 0</em>) – Thickness of new layer. <code class="docutils literal notranslate"><span class="pre">d=0</span></code> defines an infinite half-space layer. The last layer, and only that layer, must can be a half-space.</li>
+<li><strong>vp</strong> (<em>double &gt; 0</em>) – Compression-wave speed (<span class="math notranslate nohighlight">\(V_p\)</span>) of new layer.</li>
+<li><strong>vs</strong> (<em>double</em>) – Shear-wave speed (<span class="math notranslate nohighlight">\(V_s\)</span>) of new layer.</li>
+<li><strong>rho</strong> (<em>double &gt; 0</em>) – Mass density (<span class="math notranslate nohighlight">\(\rho\)</span>) of the new layer.</li>
+<li><strong>qp</strong> (<em>double &gt; 0</em>) – Q-factor (<span class="math notranslate nohighlight">\(Q_P\)</span>) for compression-waves for the new layer.</li>
+<li><strong>qs</strong> (<em>double &gt; 0</em>) – Q-factor (<span class="math notranslate nohighlight">\(Q_S\)</span>) for shear-waves for the new layer.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#This is a two-layer model</span>
+<span class="c1">#</span>
+<span class="c1"># --------------------------------------- surface (layer 1)    ---   </span>
+<span class="c1"># vp  = 1.5 (km/s)     vs = 0.8 (km/s)                          |</span>
+<span class="c1"># Qp  = 50  (    )     Qs = 100 (    )                         500m</span>
+<span class="c1"># rho = 2.1 (gr/cm^3)  d  = 0.5 (km)                            |</span>
+<span class="c1"># --------------------------------------- halfspace (layer 2)  ---</span>
+<span class="c1"># vp  = 3.2 (km/s)     vs = 1.6 (km/s)                          |</span>
+<span class="c1"># Qp  = 80  (    )     Qs = 200 (    )                          v</span>
+<span class="c1"># rho = 2.8 (gr/cm^3)  d  = 0   (km)                            z+       </span>
+<span class="c1">#</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">CrustModel</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="mi">0</span>  <span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">,</span> <span class="mf">80.</span><span class="p">,</span> <span class="mf">200.</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>Must</strong> use the units of <code class="docutils literal notranslate"><span class="pre">km</span></code> for length, <code class="docutils literal notranslate"><span class="pre">km/s</span></code> for speed, and <code class="docutils literal notranslate"><span class="pre">gr/cm^3</span></code> for density.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.CrustModel.CrustModel.get_model_params">
+<code class="descname">get_model_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel.get_model_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel.get_model_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all internal arrays of model parameters.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">rho</span><span class="p">,</span><span class="n">qa</span><span class="p">,</span><span class="n">qb</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_model_params</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.CrustModel.CrustModel.get_nlayers">
+<code class="descname">get_nlayers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel.get_nlayers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel.get_nlayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of layers in current model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of layers</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.CrustModel.CrustModel.modify_layer">
+<code class="descname">modify_layer</code><span class="sig-paren">(</span><em>k</em>, <em>d=0</em>, <em>a=0</em>, <em>b=0</em>, <em>rho=0</em>, <em>qa=0</em>, <em>qb=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel.modify_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel.modify_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify the properties of layer number <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>k</strong> (<em>int</em>) – Layer to modify.</li>
+<li><strong>d</strong> (<em>double &gt;= 0</em>) – New thickness of layer-<code class="docutils literal notranslate"><span class="pre">k</span></code>. <code class="docutils literal notranslate"><span class="pre">d=0</span></code> defines an infinite half-space layer.</li>
+<li><strong>vp</strong> (<em>double &gt;= 0</em>) – New compression-wave speed (<span class="math notranslate nohighlight">\(V_p\)</span>) of layer-<code class="docutils literal notranslate"><span class="pre">k</span></code>.</li>
+<li><strong>vs</strong> (<em>double &gt;= 0</em>) – New shear-wave speed (<span class="math notranslate nohighlight">\(V_s\)</span>) of layer-<code class="docutils literal notranslate"><span class="pre">k</span></code>.</li>
+<li><strong>rho</strong> (<em>double &gt;= 0</em>) – New mass density (<span class="math notranslate nohighlight">\(\rho\)</span>) of the layer-<code class="docutils literal notranslate"><span class="pre">k</span></code>.</li>
+<li><strong>qp</strong> (<em>double &gt;= 0</em>) – New Q-factor (<span class="math notranslate nohighlight">\(Q_P\)</span>) for compression-waves for the layer-<code class="docutils literal notranslate"><span class="pre">k</span></code>.</li>
+<li><strong>qs</strong> (<em>double &gt;= 0</em>) – New Q-factor (<span class="math notranslate nohighlight">\(Q_S\)</span>) for shear-waves for the layer-<code class="docutils literal notranslate"><span class="pre">k</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Positive values of parameters means change that parameter, zero values (default) leave
+that property unaltered.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Change Vs for layer 2.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">modify_layer</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">vs</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>Must</strong> use the units of <code class="docutils literal notranslate"><span class="pre">km</span></code> for length, <code class="docutils literal notranslate"><span class="pre">km/s</span></code> for speed, and <code class="docutils literal notranslate"><span class="pre">gr/cm^3</span></code> for density.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.CrustModel.CrustModel.printme">
+<code class="descname">printme</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel.printme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel.printme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a nice description of the current layer model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.CrustModel.CrustModel.properties_at_depths">
+<code class="descname">properties_at_depths</code><span class="sig-paren">(</span><em>zz</em>, <em>kind='previous'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel.properties_at_depths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel.properties_at_depths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return (interpolated) properties at depths specified by vector <code class="docutils literal notranslate"><span class="pre">zz</span></code>.</p>
+<p>Internally uses <code class="docutils literal notranslate"><span class="pre">scipy.interpolate.interp1d</span></code> to do interpolation with
+<code class="docutils literal notranslate"><span class="pre">kind='previous'</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>zz</strong> (<em>double</em><em> or </em><em>np.array of shape</em><em> (</em><em>N</em><em>,</em><em>)</em>) – Positions at which to interpolate.</li>
+<li><strong>kind</strong> (<em>string</em>) – Kind of interpolation to use. See options in <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.interpolate.interp1d</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.CrustModel.CrustModel.split_at_depth">
+<code class="descname">split_at_depth</code><span class="sig-paren">(</span><em>z</em>, <em>tol=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/CrustModel.html#CrustModel.split_at_depth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.CrustModel.CrustModel.split_at_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split the layer at depth <code class="docutils literal notranslate"><span class="pre">z</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>z</strong> (<em>double</em>) – Depth at which to split.</li>
+<li><strong>tol</strong> (<em>double</em>) – Split tolerance. Will not split if there is a layer interface within <code class="docutils literal notranslate"><span class="pre">z-tol</span> <span class="pre">&lt;</span> <span class="pre">z</span> <span class="pre">&lt;</span> <span class="pre">z</span> <span class="pre">+</span> <span class="pre">tol</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Index of layer that was split. (Even if not actually split).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-fkdrm.fkdrmBase">
+<span id="fkdrmbase-abstract-base-classes"></span><h3>fkdrmBase - Abstract Base Classes<a class="headerlink" href="#module-fkdrm.fkdrmBase" title="Permalink to this headline">¶</a></h3>
+<p>Abstract Base Classes defining the fkdrm interface.</p>
+<dl class="class">
+<dt id="fkdrm.fkdrmBase.Receiver">
+<em class="property">class </em><code class="descclassname">fkdrm.fkdrmBase.</code><code class="descname">Receiver</code><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#Receiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.Receiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Receiver interface</p>
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.Receiver.add_to_response">
+<code class="descname">add_to_response</code><span class="sig-paren">(</span><em>z</em>, <em>e</em>, <em>n</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#Receiver.add_to_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.Receiver.add_to_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superimpose a new response to current response.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.Receiver.get_nreceivers">
+<code class="descname">get_nreceivers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#Receiver.get_nreceivers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.Receiver.get_nreceivers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of receivers of this class (for receiver containers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.Receiver.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#Receiver.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.Receiver.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement the iterator protocol (also needs to implement <code class="docutils literal notranslate"><span class="pre">__iter__()</span></code>)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.Receiver.set_dt">
+<code class="descname">set_dt</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#Receiver.set_dt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.Receiver.set_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the time-step of the receiver</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.Receiver.write_response">
+<code class="descname">write_response</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#Receiver.write_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.Receiver.write_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the response.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fkdrm.fkdrmBase.SourceModel">
+<em class="property">class </em><code class="descclassname">fkdrm.fkdrmBase.</code><code class="descname">SourceModel</code><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#SourceModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.SourceModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Source Model interface</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fkdrm.fkdrmBase.SourceTimeFunction">
+<em class="property">class </em><code class="descclassname">fkdrm.fkdrmBase.</code><code class="descname">SourceTimeFunction</code><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#SourceTimeFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.SourceTimeFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>SourceTimeFunction interface.</p>
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.SourceTimeFunction.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#SourceTimeFunction.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.SourceTimeFunction.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the STF data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.SourceTimeFunction.get_dt">
+<code class="descname">get_dt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#SourceTimeFunction.get_dt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.SourceTimeFunction.get_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the STF time-step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fkdrm.fkdrmBase.SourceTimeFunction.set_dt">
+<code class="descname">set_dt</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fkdrm/fkdrmBase.html#SourceTimeFunction.set_dt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fkdrm.fkdrmBase.SourceTimeFunction.set_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the STF time-step.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fkdrm.CrustModels.html" class="btn btn-neutral float-right" title="CrustModels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to fkdrm’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

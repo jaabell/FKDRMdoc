@@ -1,0 +1,479 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fkdrm.CrustModel &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../fkdrm.html">fkdrm python module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fkdrm.CrustModel</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fkdrm.CrustModel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+
+<span class="k">def</span> <span class="nf">interpolateme</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;previous&quot;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)(</span><span class="n">xx</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CrustModel"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel">[docs]</a><span class="k">class</span> <span class="nc">CrustModel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Define a 1-D layered crust model.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nlayers</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param nlayers: Number of layers that the new CrustModel will have.</span>
+<span class="sd">        :type nlayers: int</span>
+
+<span class="sd">        Initialize the crust model with how many layer it has:</span>
+
+<span class="sd">            from fkdrm.CrustModel import CrustModel</span>
+<span class="sd">            model = CrustModel(2)</span>
+
+<span class="sd">        See :mod:fkdrm.CrustModels for some pre-defined models.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span> <span class="o">=</span> <span class="n">nlayers</span>
+
+        <span class="k">return</span> 
+
+<div class="viewcode-block" id="CrustModel.add_layer"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel.add_layer">[docs]</a>    <span class="k">def</span> <span class="nf">add_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">qs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new layer to the model. </span>
+
+<span class="sd">        This function must be called as many times as layers were specified when the</span>
+<span class="sd">        CrustModel was defined. Layer are stacked from top (surface) to bottom. </span>
+
+<span class="sd">        :param d: Thickness of new layer. ``d=0`` defines an infinite half-space layer. The last layer, and only that layer, must can be a half-space.</span>
+<span class="sd">        :type d: double &gt; 0</span>
+<span class="sd">        :param vp: Compression-wave speed (:math:`V_p`) of new layer. </span>
+<span class="sd">        :type vp: double &gt; 0</span>
+<span class="sd">        :param vs: Shear-wave speed (:math:`V_s`) of new layer. </span>
+<span class="sd">        :type vs: double</span>
+<span class="sd">        :param rho: Mass density (:math:`\\rho`) of the new layer. </span>
+<span class="sd">        :type rho: double &gt; 0</span>
+<span class="sd">        :param qp: Q-factor (:math:`Q_P`) for compression-waves for the new layer. </span>
+<span class="sd">        :type qp: double &gt; 0</span>
+<span class="sd">        :param qs: Q-factor (:math:`Q_S`) for shear-waves for the new layer. </span>
+<span class="sd">        :type qs: double &gt; 0</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            #This is a two-layer model</span>
+<span class="sd">            #</span>
+<span class="sd">            # --------------------------------------- surface (layer 1)    ---   </span>
+<span class="sd">            # vp  = 1.5 (km/s)     vs = 0.8 (km/s)                          |</span>
+<span class="sd">            # Qp  = 50  (    )     Qs = 100 (    )                         500m</span>
+<span class="sd">            # rho = 2.1 (gr/cm^3)  d  = 0.5 (km)                            |</span>
+<span class="sd">            # --------------------------------------- halfspace (layer 2)  ---</span>
+<span class="sd">            # vp  = 3.2 (km/s)     vs = 1.6 (km/s)                          |</span>
+<span class="sd">            # Qp  = 80  (    )     Qs = 200 (    )                          v</span>
+<span class="sd">            # rho = 2.8 (gr/cm^3)  d  = 0   (km)                            z+       </span>
+<span class="sd">            #</span>
+<span class="sd">            model = CrustModel(2)</span>
+<span class="sd">            model.add_layer(0.5, 1.5, 0.8, 2.1, 50., 100.)</span>
+<span class="sd">            model.add_layer(0  , 3.2, 1.6, 2.8, 80., 200.)</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            **Must** use the units of ``km`` for length, ``km/s`` for speed, and ``gr/cm^3`` for density.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">,</span> <span class="s2">&quot;CrustModel.add_layer - current_layer=</span><span class="si">{}</span><span class="s2"> Exceeds number of initialized layers (nlayers=</span><span class="si">{}</span><span class="s2">). &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">vs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qa</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">qp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qb</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">qs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="CrustModel.modify_layer"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel.modify_layer">[docs]</a>    <span class="k">def</span> <span class="nf">modify_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">qb</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Modify the properties of layer number ``k``.</span>
+
+<span class="sd">        :param k: Layer to modify.</span>
+<span class="sd">        :type k: int</span>
+<span class="sd">        :param d: New thickness of layer-``k``. ``d=0`` defines an infinite half-space layer.</span>
+<span class="sd">        :type d: double &gt;= 0</span>
+<span class="sd">        :param vp: New compression-wave speed (:math:`V_p`) of layer-``k``. </span>
+<span class="sd">        :type vp: double &gt;= 0</span>
+<span class="sd">        :param vs: New shear-wave speed (:math:`V_s`) of layer-``k``. </span>
+<span class="sd">        :type vs: double &gt;= 0</span>
+<span class="sd">        :param rho: New mass density (:math:`\\rho`) of the layer-``k``. </span>
+<span class="sd">        :type rho: double &gt;= 0</span>
+<span class="sd">        :param qp: New Q-factor (:math:`Q_P`) for compression-waves for the layer-``k``. </span>
+<span class="sd">        :type qp: double &gt;= 0 </span>
+<span class="sd">        :param qs: New Q-factor (:math:`Q_S`) for shear-waves for the layer-``k``. </span>
+<span class="sd">        :type qs: double &gt;= 0</span>
+
+<span class="sd">        Positive values of parameters means change that parameter, zero values (default) leave</span>
+<span class="sd">        that property unaltered.</span>
+
+<span class="sd">        Example::  </span>
+
+<span class="sd">            #Change Vs for layer 2.</span>
+<span class="sd">            model.modify_layer(2, vs=2.5)</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            **Must** use the units of ``km`` for length, ``km/s`` for speed, and ``gr/cm^3`` for density.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span> <span class="o">=</span> <span class="n">k</span>
+        
+        <span class="k">assert</span> <span class="n">current_layer</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">,</span> <span class="s2">&quot;CrustModel.modify_layer - Exceeds number of initialized layers (nlayers=</span><span class="si">{}</span><span class="s2">). &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_layer</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span>
+        <span class="k">if</span> <span class="n">o</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qa</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">qa</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qb</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">qb</span>
+
+        <span class="k">return</span> </div>
+
+<div class="viewcode-block" id="CrustModel.get_model_params"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel.get_model_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return all internal arrays of model parameters. </span>
+
+<span class="sd">        Example::</span>
+<span class="sd">        </span>
+<span class="sd">            d,a,b,rho,qa,qb = model.get_model_params()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qa</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qb</span></div>
+
+<div class="viewcode-block" id="CrustModel.properties_at_depths"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel.properties_at_depths">[docs]</a>    <span class="k">def</span> <span class="nf">properties_at_depths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zz</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;previous&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return (interpolated) properties at depths specified by vector ``zz``. </span>
+
+<span class="sd">        Internally uses ``scipy.interpolate.interp1d`` to do interpolation with</span>
+<span class="sd">        ``kind=&#39;previous&#39;``. </span>
+
+<span class="sd">        :param zz: Positions at which to interpolate.</span>
+<span class="sd">        :type zz: double or np.array of shape (N,)</span>
+<span class="sd">        :param kind: Kind of interpolation to use. See options in :class:`scipy.interpolate.interp1d`.</span>
+<span class="sd">        :type kind: string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">aa</span> <span class="o">=</span> <span class="n">interpolateme</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span><span class="n">zz</span><span class="p">,</span><span class="n">kind</span><span class="p">)</span>
+        <span class="n">bb</span> <span class="o">=</span> <span class="n">interpolateme</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span><span class="n">zz</span><span class="p">,</span><span class="n">kind</span><span class="p">)</span>
+        <span class="n">rhorho</span> <span class="o">=</span> <span class="n">interpolateme</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span><span class="n">zz</span><span class="p">,</span><span class="n">kind</span><span class="p">)</span>
+        <span class="n">qaqa</span> <span class="o">=</span> <span class="n">interpolateme</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qa</span><span class="p">,</span><span class="n">zz</span><span class="p">,</span><span class="n">kind</span><span class="p">)</span>
+        <span class="n">qbqb</span> <span class="o">=</span> <span class="n">interpolateme</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qb</span><span class="p">,</span><span class="n">zz</span><span class="p">,</span><span class="n">kind</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">aa</span><span class="p">,</span><span class="n">bb</span><span class="p">,</span><span class="n">rhorho</span><span class="p">,</span><span class="n">qaqa</span><span class="p">,</span><span class="n">qbqb</span></div>
+
+<div class="viewcode-block" id="CrustModel.split_at_depth"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel.split_at_depth">[docs]</a>    <span class="k">def</span> <span class="nf">split_at_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Split the layer at depth ``z``. </span>
+
+<span class="sd">        :param z: Depth at which to split.    </span>
+<span class="sd">        :type z: double</span>
+<span class="sd">        :param tol: Split tolerance. Will not split if there is a layer interface within ``z-tol &lt; z &lt; z + tol``.</span>
+<span class="sd">        :type tol: double</span>
+
+<span class="sd">        :returns: Index of layer that was split. (Even if not actually split).</span>
+<span class="sd">        :rtype: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tol</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">qa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">qb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">zstart</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">zend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">laynum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">was_split</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;No split&quot;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">zstart</span><span class="o">+</span><span class="n">tol</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">z</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">zend</span><span class="o">-</span><span class="n">tol</span><span class="p">):</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">zstart</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">b</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">rho</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">qa</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">qb</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">zstart</span> <span class="o">=</span> <span class="n">z</span>
+                <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">was_split</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># result = &quot;Split!&quot;</span>
+            <span class="c1"># print &quot;zstart = {}, z = {}, zend = {} --&gt;  {}&quot;.format(zstart, z, zend, result)</span>
+            <span class="k">if</span> <span class="n">z</span> <span class="o">&gt;</span> <span class="n">zstart</span><span class="o">-</span><span class="n">tol</span><span class="p">:</span>
+                <span class="n">laynum</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">laynum</span><span class="p">)</span>
+                <span class="c1"># print &quot;z = {} &lt; zstart+tol={} laynum={}&quot;.format(z, zstart+tol, laynum)</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">b</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">rho</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">qa</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">qb</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">zstart</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">zend</span> <span class="o">+=</span> <span class="mf">1e10</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">zend</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">was_split</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qa</span> <span class="o">=</span> <span class="n">qa</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qb</span> <span class="o">=</span> <span class="n">qb</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">laynum</span><span class="o">+</span><span class="mi">1</span>   <span class="c1">#+1 bcs indexes in fortran start at 1</span></div>
+
+<div class="viewcode-block" id="CrustModel.printme"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel.printme">[docs]</a>    <span class="k">def</span> <span class="nf">printme</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Print a nice description of the current layer model</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span> <span class="s2">&quot;Crust Model with </span><span class="si">{}</span><span class="s2"> layers.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="c1">#      12345678|12345678|12345678|12345678|12345678|12345678|12345678|</span>
+        <span class="nb">print</span> <span class="s2">&quot; Layer  | Depth  | Thick  | Vp     | Vs     | rho    | Qa     | Qb&quot;</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:8.0f}</span><span class="s2">|</span><span class="si">{1:8.2f}</span><span class="s2">|</span><span class="si">{2:8.2f}</span><span class="s2">|</span><span class="si">{3:8.2f}</span><span class="s2">|</span><span class="si">{4:8.2f}</span><span class="s2">|</span><span class="si">{5:8.2f}</span><span class="s2">|</span><span class="si">{6:8.1f}</span><span class="s2">|</span><span class="si">{7:8.1f}</span><span class="s2">&quot;</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">):</span>
+            <span class="nb">print</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">qa</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">qb</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">z</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CrustModel.get_nlayers"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.CrustModel.CrustModel.get_nlayers">[docs]</a>    <span class="k">def</span> <span class="nf">get_nlayers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the number of layers in current model.</span>
+
+<span class="sd">        :returns: number of layers</span>
+<span class="sd">        :type: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,582 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fkdrm.fkdrm &mdash; fkdrm 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> fkdrm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../fkdrm.html">fkdrm python module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fkdrm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fkdrm.fkdrm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fkdrm.fkdrm</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">All fkdrm simulations are controlled by the fkdrm class. </span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">fkdrmBase</span> <span class="k">import</span> <span class="n">SourceModel</span><span class="p">,</span> <span class="n">Receiver</span>
+<span class="kn">from</span> <span class="nn">CrustModel</span> <span class="k">import</span> <span class="n">CrustModel</span>
+<span class="kn">import</span> <span class="nn">core</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">sig</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+<span class="kn">import</span> <span class="nn">imp</span>
+
+
+<span class="n">debugstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; (</span><span class="si">{rank}</span><span class="s2">/</span><span class="si">{nprocs}</span><span class="s2">) </span>
+<span class="s2">    ipair = </span><span class="si">{ipair}</span><span class="s2"></span>
+<span class="s2">    next_pair = </span><span class="si">{next_pair}</span><span class="s2"></span>
+<span class="s2">    skip_pairs = </span><span class="si">{skip_pairs}</span><span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="s1">&#39;mpi4py&#39;</span><span class="p">)</span>
+    <span class="n">found_mpi4py</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">found_mpi4py</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">if</span> <span class="n">found_mpi4py</span><span class="p">:</span>
+    <span class="c1"># print &quot;Found MPI&quot;</span>
+    <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
+    <span class="n">use_mpi</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+    <span class="n">nprocs</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># print &quot;Not-Found MPI&quot;</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">nprocs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">use_mpi</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="s1">&#39;tqdm&#39;</span><span class="p">)</span>
+    <span class="n">found_tqdm</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">found_tqdm</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="fkdrm"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm">[docs]</a><span class="k">class</span> <span class="nc">fkdrm</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This is the main class in fkdrm, used to define a model, link components, </span>
+<span class="sd">set simulation  parameters and execute it. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#Default FK params</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span>  
+    <span class="n">nfft</span><span class="o">=</span><span class="mi">4096</span> <span class="c1">#: Number of time-points to use in fft</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.05</span> <span class="c1">#: Simulation time-step</span>
+    <span class="n">tb</span><span class="o">=</span><span class="mi">1000</span> <span class="c1">#: Prepend `tb` points before time history to avoid wrapping effects </span>
+    <span class="n">taper</span><span class="o">=</span><span class="mf">0.5</span> <span class="c1">#: </span>
+    <span class="n">smth</span><span class="o">=</span><span class="mi">2</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">wc1</span><span class="o">=</span><span class="mi">1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">wc2</span><span class="o">=</span><span class="mi">1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">pmin</span><span class="o">=</span><span class="mf">0.</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">pmax</span><span class="o">=</span><span class="mi">1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">dk</span><span class="o">=</span><span class="mf">0.3</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">kc</span><span class="o">=</span><span class="mi">15</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">nx</span><span class="o">=</span><span class="mi">1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">smth</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">wc1</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">wc2</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">pmin</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">pmax</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">dk</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+    <span class="n">kc</span> <span class="o">=</span> <span class="mf">15.0</span> <span class="c1">#: (George.. please provide one-line description!)</span>
+
+<div class="viewcode-block" id="fkdrm.__init__"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crust</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">receiver</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">        ==========</span>
+<span class="sd">        :param crust: Crustal model used by the simulation. </span>
+<span class="sd">        :type crust: :class:`CrustModel`</span>
+<span class="sd">        :param source: Source model(s). Choose from :class:`fkdrm.Sources`</span>
+<span class="sd">        :type source: :class:`fkdrmBase.SourceModel`</span>
+<span class="sd">        :param receiver: Receiver station(s). Choose from :class:`fkdrm.Receivers`</span>
+<span class="sd">        :type receiver: :class:`fkdrmBase.Receiver`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crust</span><span class="p">,</span> <span class="n">CrustModel</span><span class="p">),</span> <span class="s2">&quot;crust must be an instance of the fkdrmBase.CrustModel class&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">SourceModel</span><span class="p">),</span> <span class="s2">&quot;crust must be an instance of the fkdrmBase.SourceModel class&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">receiver</span><span class="p">,</span> <span class="n">Receiver</span><span class="p">),</span> <span class="s2">&quot;crust must be an instance of the fkdrmBase.Receiver class&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">crust</span> <span class="o">=</span> <span class="n">crust</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="o">=</span> <span class="n">receiver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nprocs</span> <span class="o">=</span> <span class="n">nprocs</span></div>
+
+
+<div class="viewcode-block" id="fkdrm.setup"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set any of the fkdrm simulation parameters.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            model.setup(dt=0.005)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># print &quot;setting {} = {} (formerly = {})&quot;.format(key, value, getattr(self, key, value))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="fkdrm.get_parameter"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value of any simulation parameter.</span>
+<span class="sd">        </span>
+<span class="sd">        Arguments:</span>
+<span class="sd">        ==========</span>
+<span class="sd">        :param parameter: Name of the parameter to query.</span>
+<span class="sd">        :type parameter: str</span>
+
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            dt = model.get_parameter(&quot;dt&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="s2">&quot;getting </span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">value</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="fkdrm.run"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug_subgreen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">debug_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progressbar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the simulation. </span>
+<span class="sd">        </span>
+<span class="sd">        Arguments:</span>
+<span class="sd">        ==========</span>
+<span class="sd">        :param debug_subgreen: Print internal debug information.</span>
+<span class="sd">        :type debug_subgreen: bool</span>
+<span class="sd">        :param debug_mpi: Print debug information concerning parallel runs .</span>
+<span class="sd">        :type debug_mpi: bool</span>
+<span class="sd">        :param progressbar: Show fancy progressbar (uses tqdm)</span>
+<span class="sd">        :type progressbar: bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">progressbar</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">nrcv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">get_nreceivers</span><span class="p">()</span>
+        <span class="n">nsrc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_nsources</span><span class="p">()</span>
+        <span class="n">npairs</span> <span class="o">=</span> <span class="n">nrcv</span> <span class="o">*</span> <span class="n">nsrc</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="s2">&quot;FKDRM Running &quot;</span>
+            <span class="nb">print</span> <span class="s2">&quot; Number of sources   = &quot;</span><span class="p">,</span> <span class="n">nsrc</span>
+            <span class="nb">print</span> <span class="s2">&quot; Number of receivers = &quot;</span><span class="p">,</span> <span class="n">nrcv</span>
+            <span class="nb">print</span> <span class="s2">&quot; Total src-rcv pairs = &quot;</span><span class="p">,</span> <span class="n">npairs</span>
+            <span class="nb">print</span> <span class="s2">&quot; dt   = &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+            <span class="nb">print</span> <span class="s2">&quot; nfft = &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nfft</span>
+            <span class="nb">print</span> <span class="s2">&quot; &quot;</span>
+            <span class="nb">print</span> <span class="s2">&quot; Using </span><span class="si">{}</span><span class="s2"> processes. &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">nprocs</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="s2">&quot; &quot;</span>
+        <span class="k">if</span> <span class="n">progressbar</span> <span class="ow">and</span> <span class="n">found_tqdm</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">npairs</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pairs&quot;</span><span class="p">)</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;FKDRM Progress&quot;</span><span class="p">)</span>    
+
+        <span class="k">if</span> <span class="n">nprocs</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">next_pair</span> <span class="o">=</span> <span class="n">rank</span>
+            <span class="n">skip_pairs</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="n">next_pair</span> <span class="o">=</span> <span class="n">rank</span><span class="o">-</span><span class="mi">1</span>
+            <span class="n">skip_pairs</span> <span class="o">=</span> <span class="n">nprocs</span><span class="o">-</span><span class="mi">1</span>
+
+        <span class="n">ipair</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">request_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span>  <span class="n">i_source</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i_receiver</span><span class="p">,</span> <span class="n">receiver</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">ipair</span> <span class="o">==</span> <span class="n">next_pair</span><span class="p">:</span>
+                    <span class="n">x_src</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">stf</span><span class="p">,</span> <span class="n">tt</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+                    <span class="k">if</span> <span class="n">debug_mpi</span><span class="p">:</span>
+                        <span class="nb">print</span> <span class="n">debugstring</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">nprocs</span><span class="o">=</span><span class="n">nprocs</span><span class="p">,</span> <span class="n">ipair</span><span class="o">=</span><span class="n">ipair</span><span class="p">,</span> <span class="n">next_pair</span><span class="o">=</span><span class="n">next_pair</span><span class="p">,</span> <span class="n">skip_pairs</span><span class="o">=</span><span class="n">skip_pairs</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">nprocs</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="n">rank</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nprocs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">x_rcv</span> <span class="o">=</span> <span class="n">receiver</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
+                        <span class="n">thiscrust</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">crust</span><span class="p">)</span>
+
+                        <span class="n">pf</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">lf</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">angles</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">angles</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">sz</span> <span class="o">=</span> <span class="n">x_src</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_src</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_src</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rz</span> <span class="o">=</span> <span class="n">x_rcv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_rcv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_rcv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">sz</span> <span class="o">&lt;</span> <span class="n">rz</span><span class="p">:</span>
+                            <span class="nb">print</span> <span class="s2">&quot;frkdrm.run() - Error source (at </span><span class="si">{}</span><span class="s2">) should be below receiver (at </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span> <span class="n">rz</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">debug_subgreen</span><span class="p">:</span>
+                            <span class="nb">print</span> <span class="s2">&quot;Crust Before:&quot;</span>
+                            <span class="n">thiscrust</span><span class="o">.</span><span class="n">printme</span><span class="p">()</span>
+                        <span class="n">src</span> <span class="o">=</span> <span class="n">thiscrust</span><span class="o">.</span><span class="n">split_at_depth</span><span class="p">(</span><span class="n">sz</span><span class="p">)</span>
+                        <span class="n">rcv</span> <span class="o">=</span> <span class="n">thiscrust</span><span class="o">.</span><span class="n">split_at_depth</span><span class="p">(</span><span class="n">rz</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">debug_subgreen</span><span class="p">:</span>
+                            <span class="nb">print</span> <span class="s2">&quot;Crust After:&quot;</span>
+                            <span class="n">thiscrust</span><span class="o">.</span><span class="n">printme</span><span class="p">()</span>
+                            <span class="nb">print</span> <span class="s2">&quot;x_src = </span><span class="si">{}</span><span class="s2"> x_rcv = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x_src</span><span class="p">,</span> <span class="n">x_rcv</span><span class="p">)</span>
+                            <span class="nb">print</span> <span class="s2">&quot;  src = </span><span class="si">{}</span><span class="s2">   rcv = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">rcv</span><span class="p">)</span>
+                            <span class="nb">print</span> <span class="s2">&quot;&quot;</span>
+                            <span class="nb">print</span> <span class="s2">&quot;Running fkdrm&quot;</span>
+                        
+                        <span class="n">sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+                        <span class="n">nfft</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nfft</span>
+                        <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+                        <span class="n">taper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">taper</span>
+                        <span class="n">tb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tb</span>
+                        <span class="n">smth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">smth</span>
+                        <span class="n">wc1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wc1</span>
+                        <span class="n">wc2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wc2</span>
+                        <span class="n">pmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pmin</span>
+                        <span class="n">pmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pmax</span>
+                        <span class="n">dk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dk</span>
+                        <span class="n">kc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kc</span>
+                        <span class="n">nx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span>
+                        <span class="n">sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+                        <span class="n">smth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">smth</span>
+                        <span class="n">wc1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wc1</span>
+                        <span class="n">wc2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wc2</span>
+                        <span class="n">pmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pmin</span>
+                        <span class="n">pmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pmax</span>
+                        <span class="n">dk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dk</span>
+                        <span class="n">kc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kc</span>
+                        <span class="n">d</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">rho</span><span class="p">,</span><span class="n">qa</span><span class="p">,</span><span class="n">qb</span> <span class="o">=</span> <span class="n">thiscrust</span><span class="o">.</span><span class="n">get_model_params</span><span class="p">()</span>              
+                        <span class="n">mb</span> <span class="o">=</span> <span class="n">thiscrust</span><span class="o">.</span><span class="n">get_nlayers</span><span class="p">()</span>
+                        <span class="n">stype</span><span class="p">,</span><span class="n">updn</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span><span class="mi">0</span>  <span class="c1">#Source type double-couple, compute up and down going wave</span>
+                        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">sx</span><span class="o">-</span><span class="n">rx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">sy</span> <span class="o">-</span> <span class="n">ry</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">debug_subgreen</span><span class="p">:</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    mb = &quot;</span><span class="p">,</span> <span class="n">mb</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    src = &quot;</span><span class="p">,</span> <span class="n">src</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    rcv = &quot;</span><span class="p">,</span> <span class="n">rcv</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    stype = &quot;</span><span class="p">,</span> <span class="n">stype</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    updn = &quot;</span><span class="p">,</span> <span class="n">updn</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    d = &quot;</span><span class="p">,</span> <span class="n">d</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    a = &quot;</span><span class="p">,</span> <span class="n">a</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    b = &quot;</span><span class="p">,</span> <span class="n">b</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    rho = &quot;</span><span class="p">,</span> <span class="n">rho</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    qa = &quot;</span><span class="p">,</span> <span class="n">qa</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    qb = &quot;</span><span class="p">,</span> <span class="n">qb</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    dt = &quot;</span><span class="p">,</span> <span class="n">dt</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    nfft = &quot;</span><span class="p">,</span> <span class="n">nfft</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    taper = &quot;</span><span class="p">,</span> <span class="n">taper</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    tb = &quot;</span><span class="p">,</span> <span class="n">tb</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    nx = &quot;</span><span class="p">,</span> <span class="n">nx</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    x = &quot;</span><span class="p">,</span> <span class="n">x</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    sigma = &quot;</span><span class="p">,</span> <span class="n">sigma</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    smth = &quot;</span><span class="p">,</span> <span class="n">smth</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    wc1 = &quot;</span><span class="p">,</span> <span class="n">wc1</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    wc2 = &quot;</span><span class="p">,</span> <span class="n">wc2</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    pmin = &quot;</span><span class="p">,</span> <span class="n">pmin</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    pmax = &quot;</span><span class="p">,</span> <span class="n">pmax</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    dk = &quot;</span><span class="p">,</span> <span class="n">dk</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    kc = &quot;</span><span class="p">,</span> <span class="n">kc</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    taper = &quot;</span><span class="p">,</span> <span class="n">taper</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    pf, df, lf = &quot;</span><span class="p">,</span> <span class="n">pf</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">lf</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    sx, sy, sz = &quot;</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">sz</span>
+                            <span class="nb">print</span> <span class="s2">&quot;    rx, ry, rz = &quot;</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rz</span>
+                        <span class="k">if</span> <span class="n">debug_mpi</span><span class="p">:</span>
+                            <span class="nb">print</span> <span class="s2">&quot;P</span><span class="si">{}</span><span class="s2"> working on ipair = </span><span class="si">{}</span><span class="s2"> @ (</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">) src @ (</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">ipair</span><span class="p">,</span> <span class="n">x_rcv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_rcv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_rcv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">x_src</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_src</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_src</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                        <span class="c1">#Execute the core subgreen fortran routing                      </span>
+                        <span class="n">tdata</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">t0</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">subgreen</span><span class="p">(</span><span class="n">mb</span><span class="p">,</span><span class="n">src</span><span class="p">,</span><span class="n">rcv</span><span class="p">,</span><span class="n">stype</span><span class="p">,</span><span class="n">updn</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">rho</span><span class="p">,</span><span class="n">qa</span><span class="p">,</span><span class="n">qb</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">nfft</span><span class="p">,</span><span class="n">tb</span><span class="p">,</span><span class="n">nx</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="n">smth</span><span class="p">,</span><span class="n">wc1</span><span class="p">,</span><span class="n">wc2</span><span class="p">,</span><span class="n">pmin</span><span class="p">,</span><span class="n">pmax</span><span class="p">,</span><span class="n">dk</span><span class="p">,</span><span class="n">kc</span><span class="p">,</span><span class="n">taper</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">pf</span><span class="p">,</span><span class="n">df</span><span class="p">,</span><span class="n">lf</span><span class="p">,</span><span class="n">sx</span><span class="p">,</span><span class="n">sy</span><span class="p">,</span><span class="n">rx</span><span class="p">,</span><span class="n">ry</span><span class="p">)</span>
+                        <span class="n">nt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+                        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nt</span><span class="o">*</span><span class="n">dt</span><span class="p">,</span><span class="n">dt</span><span class="p">)</span><span class="o">+</span><span class="n">tt</span><span class="o">+</span><span class="n">t0</span>
+
+                        <span class="c1">#Resample stf to current dt</span>
+                        <span class="n">stf</span><span class="o">.</span><span class="n">set_dt</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+                        <span class="n">dstf</span><span class="p">,</span> <span class="n">tstf</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+                        <span class="c1">#Convolve with STF</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dstf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">z_stf</span> <span class="o">=</span> <span class="n">z</span><span class="o">*</span><span class="n">dstf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="n">e_stf</span> <span class="o">=</span> <span class="n">e</span><span class="o">*</span><span class="n">dstf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="n">n_stf</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="n">dstf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">tstf_resampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tstf</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">dt</span><span class="p">)</span>
+                            <span class="n">dstf_resampled</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">tstf</span><span class="p">,</span> <span class="n">dstf</span><span class="p">)(</span><span class="n">tstf_resampled</span><span class="p">)</span>
+                            <span class="n">z_stf</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">dstf_resampled</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+                            <span class="n">e_stf</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">dstf_resampled</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+                            <span class="n">n_stf</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">dstf_resampled</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="c1"># new_request_list = []</span>
+                            <span class="c1"># new_data_list = []</span>
+                            <span class="c1"># for req, data in zip(request_list, data_list):</span>
+                            <span class="c1">#   print req, data</span>
+                            <span class="c1">#   if not req.test():</span>
+                            <span class="c1">#       new_request_list.append(req)</span>
+                            <span class="c1">#       new_data_list.append(data)</span>
+                            <span class="c1"># request_list = new_request_list</span>
+                            <span class="c1"># data_list = new_data_list</span>
+                            <span class="k">if</span> <span class="n">debug_mpi</span><span class="p">:</span>
+                                <span class="nb">print</span> <span class="s2">&quot;    P</span><span class="si">{}</span><span class="s2"> sending results to P0.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
+                            <span class="n">ant</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">nt</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                            <span class="c1"># req1 = comm.Isend([data_list[-1], 1, MPI.INT], dest=0, tag=2*ipair)</span>
+                            <span class="n">comm</span><span class="o">.</span><span class="n">Send</span><span class="p">(</span><span class="n">ant</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">ipair</span><span class="p">)</span>
+
+                            <span class="c1"># request_list.append(req1)</span>
+
+                            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nt</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                            <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">z_stf</span>
+                            <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">e_stf</span>
+                            <span class="n">data</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_stf</span>
+                            <span class="n">data</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+                            <span class="c1"># req2 = commostm.Isend([data_list[-1],nt,MPI.DOUBLE], dest=0, tag=2*ipair+1)</span>
+                            <span class="n">comm</span><span class="o">.</span><span class="n">Send</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">ipair</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+                            <span class="c1"># request_list.append(req2)</span>
+
+                            <span class="n">next_pair</span> <span class="o">+=</span> <span class="n">skip_pairs</span>
+
+                    <span class="c1">#Sum at receiver</span>
+                    <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+                        <span class="k">if</span> <span class="n">nprocs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">skip_pairs_remotes</span> <span class="o">=</span> <span class="n">nprocs</span><span class="o">-</span><span class="mi">1</span>
+                            <span class="n">remote</span> <span class="o">=</span> <span class="n">ipair</span> <span class="o">%</span> <span class="n">skip_pairs_remotes</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="k">if</span> <span class="n">debug_mpi</span><span class="p">:</span>
+                                <span class="nb">print</span> <span class="s2">&quot;P0 waiting for </span><span class="si">{}</span><span class="s2"> to send results for ipair = </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">ipair</span><span class="p">)</span>
+                            <span class="n">ant</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                            <span class="n">comm</span><span class="o">.</span><span class="n">Recv</span><span class="p">(</span><span class="n">ant</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">remote</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">ipair</span><span class="p">)</span>
+                            <span class="n">nt</span> <span class="o">=</span> <span class="n">ant</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nt</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                            <span class="n">comm</span><span class="o">.</span><span class="n">Recv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">remote</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">ipair</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                            <span class="n">z_stf</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="n">e_stf</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="n">n_stf</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+                            <span class="n">t</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="n">debug_mpi</span><span class="p">:</span>
+                                <span class="nb">print</span> <span class="s2">&quot;P0 got results from </span><span class="si">{}</span><span class="s2"> for ipair = </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">ipair</span><span class="p">)</span>
+                        <span class="n">next_pair</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                        <span class="n">receiver</span><span class="o">.</span><span class="n">add_to_response</span><span class="p">(</span><span class="n">z_stf</span><span class="p">,</span><span class="n">e_stf</span><span class="p">,</span><span class="n">n_stf</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+
+
+                        <span class="k">if</span> <span class="n">progressbar</span> <span class="ow">and</span> <span class="n">found_tqdm</span><span class="p">:</span>
+                            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span> <span class="s2">&quot;pair, rcv, src = &quot;</span><span class="p">,</span> <span class="n">ipair</span><span class="p">,</span><span class="n">i_receiver</span><span class="p">,</span><span class="n">i_source</span>
+                    <span class="c1">#End if</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># print &quot;ipair = {} != next_pair = {}&quot;.format(ipair, next_pair)</span>
+                    <span class="k">pass</span>
+                <span class="n">ipair</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">write_response</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">progressbar</span> <span class="ow">and</span> <span class="n">found_tqdm</span><span class="p">:</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="fkdrm.get_rank"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm.get_rank">[docs]</a>    <span class="k">def</span> <span class="nf">get_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;In parallel runs. Return id of current process (starting from 0)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span></div>
+
+<div class="viewcode-block" id="fkdrm.get_nprocs"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm.get_nprocs">[docs]</a>    <span class="k">def</span> <span class="nf">get_nprocs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;In parallel runs. Return number of processes used. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nprocs</span></div>
+
+<div class="viewcode-block" id="fkdrm.is_master_process"><a class="viewcode-back" href="../../fkdrm.html#fkdrm.fkdrm.fkdrm.is_master_process">[docs]</a>    <span class="k">def</span> <span class="nf">is_master_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns true if this is the master process.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jose Abell, Jorge Crempien and Matias Recabarren
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>
